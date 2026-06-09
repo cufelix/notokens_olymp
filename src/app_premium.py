@@ -35,51 +35,92 @@ st.set_page_config(
     menu_items={"About": "VoltPlán © 2026 notokens.ai"}
 )
 
-# Custom CSS for fancy design
+# Modern minimalist CSS design
 st.markdown("""
 <style>
-    /* Dark theme gradient */
+    /* Clean background */
     [data-testid="stAppViewContainer"] {
-        background: linear-gradient(135deg, #0f0f23 0%, #1a0f3c 50%, #0f0f23 100%);
+        background: #f8f9fa;
     }
 
-    /* Header styling */
+    [data-testid="stSidebar"] {
+        background: #ffffff;
+        border-right: 1px solid #e0e0e0;
+    }
+
+    /* Header styling - clean and simple */
     h1 {
-        background: linear-gradient(120deg, #00d4ff, #0099ff, #6600ff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-size: 2.5em;
-        font-weight: 800;
+        color: #1a1a1a;
+        font-size: 2.2em;
+        font-weight: 600;
+        margin-bottom: 0.5em;
+        letter-spacing: -0.5px;
     }
 
     h2 {
-        color: #00d4ff;
-        border-bottom: 2px solid #00d4ff;
-        padding-bottom: 10px;
+        color: #2c3e50;
+        font-weight: 600;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 0.8em;
+        font-size: 1.4em;
     }
 
-    /* Cards */
+    h3 {
+        color: #34495e;
+        font-weight: 500;
+    }
+
+    /* Metric cards - clean minimal style */
     [data-testid="stMetric"] {
-        background: rgba(0, 212, 255, 0.05);
-        border-left: 4px solid #00d4ff;
-        border-radius: 8px;
-        padding: 15px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 1.2em;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
-    /* Buttons */
+    [data-testid="stMetric"]:hover {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Buttons - minimalist */
     .stButton > button {
-        background: linear-gradient(120deg, #00d4ff, #0099ff);
+        background: #2c3e50;
         color: white;
         border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 500;
+        padding: 0.6em 1.2em;
+        font-size: 0.95em;
     }
 
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        background: #34495e;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Divider */
+    hr {
+        border: none;
+        border-top: 1px solid #e0e0e0;
+        margin: 1.5em 0;
+    }
+
+    /* Text styling */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+        color: #2c3e50;
+    }
+
+    /* Tab styling */
+    [data-baseweb="tab"] {
+        color: #666;
+        font-weight: 500;
+    }
+
+    [aria-selected="true"] {
+        color: #2c3e50 !important;
+        border-bottom-color: #2c3e50 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -115,8 +156,8 @@ df_pd = df.to_pandas()
 # ============================================================================
 
 with st.sidebar:
-    st.markdown("# 🎯 VoltPlán PREMIUM")
-    st.markdown("**Magistrát Praha Edition**")
+    st.markdown("## VoltPlán")
+    st.markdown("*Magistrát Praha Edition*")
     st.divider()
 
     # Main selector
@@ -132,7 +173,7 @@ with st.sidebar:
     st.divider()
 
     # Budget planning
-    st.subheader("💰 Rozpočet")
+    st.subheader("Rozpočet")
     budget_total = st.number_input(
         "Celkový rozpočet (mil. Kč):",
         min_value=50,
@@ -150,7 +191,7 @@ with st.sidebar:
     st.divider()
 
     # Timeline
-    st.subheader("📅 Časový plán")
+    st.subheader("Časový plán")
     phase_option = st.selectbox(
         "Fáze výstavby:",
         ["Celoroční", "Fáze 1-2-3", "Q1-Q2-Q3-Q4"]
@@ -159,7 +200,7 @@ with st.sidebar:
     st.divider()
 
     # ROI Assumptions
-    st.subheader("📈 ROI Předpoklady")
+    st.subheader("ROI předpoklady")
     annual_savings = st.number_input(
         "Ročních úspor na síť (mil. Kč):",
         min_value=10,
@@ -191,7 +232,7 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 # ============================================================================
 
 with tab1:
-    st.markdown("# 📊 Executive Dashboard")
+    st.markdown("## Přehled klíčových ukazatelů")
 
     # Get top zones
     top_zones = df_pd.nlargest(num_chargers, "estimated_ev_count_2030_synthetic")
@@ -240,7 +281,7 @@ with tab1:
     col_chart1, col_chart2 = st.columns(2)
 
     with col_chart1:
-        st.subheader("🔥 Poptávka po zónách (Top 10)")
+        st.subheader("Poptávka po zónách")
 
         top_10 = top_zones.head(10).copy()
         fig = px.bar(
@@ -261,7 +302,7 @@ with tab1:
         st.plotly_chart(fig, use_container_width=True)
 
     with col_chart2:
-        st.subheader("💵 Rozpočtová alokace")
+        st.subheader("Rozpočtová alokace")
 
         budget_data = {
             "Stavba": budget_total * 0.7,
@@ -283,7 +324,7 @@ with tab1:
     st.divider()
 
     # Timeline
-    st.subheader("📅 Doporučený časový plán")
+    st.subheader("Časový plán implementace")
 
     phases = {
         "Fáze 1 (Q1-Q2)": {
@@ -311,12 +352,12 @@ with tab1:
 # ============================================================================
 
 with tab2:
-    st.markdown("# 🗺️ Interaktivní mapa & Doporučení")
+    st.markdown("## Mapa doporučených lokalit")
 
     col_map, col_table = st.columns([2, 1])
 
     with col_map:
-        st.subheader("Mapa s heatmapou poptávky")
+        st.subheader("Mapa s rozložením poptávky")
 
         center_lat = df_pd["center_lat_real"].mean()
         center_lon = df_pd["center_lon_real"].mean()
@@ -383,9 +424,9 @@ with tab2:
 # ============================================================================
 
 with tab3:
-    st.markdown("# 💼 Analýza Scénářů (What-If)")
+    st.markdown("## Analýza scénářů")
 
-    st.subheader("Porovnání scénářů")
+    st.markdown("**Porovnání scénářů:**")
 
     scenarios = {
         "🟢 Konzervativní\n(70% poptávky)": {
@@ -433,12 +474,12 @@ with tab3:
 # ============================================================================
 
 with tab4:
-    st.markdown("# 💰 Detailní Analýza Rozpočtu & ROI")
+    st.markdown("## Rozpočet a ROI analýza")
 
     col_b1, col_b2 = st.columns(2)
 
     with col_b1:
-        st.subheader("📋 Rozpočet")
+        st.subheader("Rozpočet")
 
         budget_breakdown = {
             "Stavba stanic": budget_total * 0.7,
@@ -453,7 +494,7 @@ with tab4:
         st.write(f"**CELKEM:** {budget_total} mil. Kč")
 
     with col_b2:
-        st.subheader("📊 Výnosy & Úspory (Ročně)")
+        st.subheader("Výnosy a úspory (ročně)")
 
         benefits = {
             "Ušetření na energiích (síť)": annual_savings,
@@ -471,7 +512,7 @@ with tab4:
     st.divider()
 
     # ROI Timeline
-    st.subheader("📈 Časový vývoj ROI")
+    st.subheader("Vývoj ROI v čase")
 
     years = np.arange(0, 6)
     roi_timeline = []
@@ -511,9 +552,9 @@ with tab4:
 # ============================================================================
 
 with tab5:
-    st.markdown("# 📈 Vygenerování Reportu")
+    st.markdown("## Exportní a reporty")
 
-    st.subheader("Výběr sekce reportu")
+    st.subheader("Obsah reportu")
 
     report_sections = st.multiselect(
         "Které sekce zahrnout do reportu?",
@@ -554,23 +595,23 @@ with tab5:
 # ============================================================================
 
 with tab6:
-    st.markdown("# ⚙️ Nastavení")
+    st.markdown("## Nastavení")
 
     col_s1, col_s2 = st.columns(2)
 
     with col_s1:
-        st.subheader("🎨 Vzhled")
+        st.subheader("Vzhled")
         theme = st.selectbox("Barevné schéma:", ["Tmavé (Dark)", "Světlé (Light)"])
         language = st.selectbox("Jazyk:", ["Čeština", "English", "Deutsch"])
 
     with col_s2:
-        st.subheader("📊 Data")
+        st.subheader("Data")
         update_freq = st.selectbox("Frekvence aktualizace:", ["Real-time", "Denně", "Týdně"])
         precision = st.selectbox("Přesnost dat:", ["Vysoká", "Střední", "Nízká"])
 
     st.divider()
 
-    st.subheader("📧 Notifikace")
+    st.subheader("Notifikace")
 
     col_n1, col_n2 = st.columns(2)
 
@@ -584,7 +625,7 @@ with tab6:
 
     st.divider()
 
-    st.subheader("👥 Tým & Přístup")
+    st.subheader("Tým a přístup")
 
     col_t1, col_t2 = st.columns(2)
 
@@ -606,11 +647,7 @@ with tab6:
 st.divider()
 st.markdown("""
 ---
-**VoltPlán PREMIUM** — Powered by AI for Smart EV Infrastructure Planning
-- 🏛️ Magistrát Praha
-- 📊 Advanced Analytics
-- 💰 Budget Planning
-- 🎯 Data-Driven Decisions
+**VoltPlán** | Systém pro plánování nabíjecích stanic EV v Praze
 
-*© 2026 notokens.ai | Česká AI Olympiáda 2026*
+*© 2026 notokens.ai — Česká AI Olympiáda 2026*
 """)
