@@ -48,7 +48,10 @@ st.markdown(f"""
         font-family: -apple-system, "SF Pro Display", "Helvetica Neue", "Segoe UI", sans-serif;
         color: {INK};
     }}
-    #MainMenu, footer, header {{ visibility: hidden; }}
+    #MainMenu, footer {{ visibility: hidden; }}
+    /* header NEschováváme — je v něm tlačítko na rozbalení levého panelu */
+    [data-testid="stSidebar"] {{ min-width: 310px; }}
+    [data-testid="collapsedControl"] {{ display: block !important; visibility: visible !important; }}
     .block-container {{ padding-top: 2.2rem; max-width: 1500px; }}
 
     h1, h2, h3, h4 {{ color: {INK}; letter-spacing: -0.02em; font-weight: 650; }}
@@ -169,11 +172,14 @@ with st.sidebar:
     st.markdown("## Filtry")
 
     districts = sorted(df_all["district"].unique().tolist())
-    sel_districts = st.multiselect("Správní obvod", districts, default=districts)
+    sel_districts = st.multiselect("Městská část / obvod", districts, default=districts,
+                                   help="Vyber jeden nebo víc obvodů; mapa i žebříček se přepočítají.")
 
-    min_score = st.slider("Min. suitability skóre", 0, 100, 0, 5)
+    top_n = st.slider("Kolik nových stanic plánuješ", 5, 50, 15, 5,
+                      help="Počet TOP doporučených lokalit, které se zvýrazní a dají exportovat.")
 
-    top_n = st.slider("Počet doporučených lokalit (TOP-N)", 5, 50, 15, 5)
+    min_score = st.slider("Min. skóre vhodnosti", 0, 100, 0, 5,
+                          help="Skryje zóny pod zvolenou hranicí vhodnosti.")
 
     st.divider()
     st.markdown("## Vrstvy mapy")
