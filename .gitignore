@@ -1,0 +1,7 @@
+data/participants/
+data/**/*.csv
+*.parquet
+submissions/*.csv
+notebooks/.ipynb_checkpoints/
+__pycache__/
+.venv/
