@@ -1,0 +1,1 @@
+V záložce Rozpočet zadá město svůj limit a optimalizátor z něj vybere takovou kombinaci lokalit, která pokryje co největší poptávku. Z rozpočtu se stává maximum užitku.

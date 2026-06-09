@@ -1,0 +1,1 @@
+A přímo vyčíslíme hodnotu pro město: kolik korun by se proinvestovalo do špatně umístěných stanic bez našeho nástroje. Tohle je promrhaná investice, které VoltPlán zabrání.

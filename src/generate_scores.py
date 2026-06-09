@@ -132,9 +132,14 @@ def main() -> None:
     leaky = [c for c in feats if any(h in c.lower() for h in DROP_HINTS)]
     assert not leaky, f"LEAKAGE: {leaky}"
 
+    # celá Praha = train + validation (sandbox, ne odevzdání → smíme skórovat vše)
+    allz = pl.concat([train, val], how="vertical_relaxed")
+    print(f"Skóruje se {allz.height} zón (celá Praha: {train.height} train + {val.height} val)")
+
     Xtr = train.select(feats).to_numpy()
     ytr = train.get_column(TARGET).to_numpy()
     Xva = val.select(feats).to_numpy()
+    Xall = allz.select(feats).to_numpy()
 
     import lightgbm as lgb
 
@@ -143,13 +148,14 @@ def main() -> None:
         subsample=0.8, colsample_bytree=0.8, random_state=42, verbose=-1,
     )
     model.fit(Xtr, ytr)
-    pred = np.clip(model.predict(Xva), 0, None)
+    pred_val = np.clip(model.predict(Xva), 0, None)   # jen pro POCTIVÉ metriky na holdoutu
+    pred = np.clip(model.predict(Xall), 0, None)      # pro mapu celé Prahy
 
     SUB.mkdir(exist_ok=True)
     with open(SUB / "lgbm_model.pkl", "wb") as f:
         pickle.dump(model, f)
 
-    # --- metriky vs baseline (na holdoutu, pro tab Model & metodika) ---
+    # --- metriky vs baseline (POČÍTÁNO NA HOLDOUTU val, ne na trénink-zónách) ---
     yva = val.get_column(TARGET).to_numpy().astype(float)
     pop = val.get_column("population_census_2021_real").to_numpy().astype(float)
     b_pop = pop / pop.mean() * ytr.mean()  # triviální pravidlo ∝ populace
@@ -161,20 +167,21 @@ def main() -> None:
         k = min(k, len(y))
         return len(set(np.argsort(y)[-k:]) & set(np.argsort(p)[-k:])) / k
 
-    mae_model, mae_base = _mae(yva, pred), _mae(yva, b_pop)
+    mae_model, mae_base = _mae(yva, pred_val), _mae(yva, b_pop)
     metrics = {
         "mae_model": round(mae_model, 2),
         "mae_baseline_pop": round(mae_base, 2),
         "mae_improvement_pct": round((mae_base - mae_model) / mae_base * 100, 1),
-        "precision_at_50": round(_p_at_k(yva, pred), 2),
+        "precision_at_50": round(_p_at_k(yva, pred_val), 2),
         "n_val_zones": int(val.height),
+        "n_scored_zones": int(allz.height),
         "n_features": len(feats),
     }
 
-    # --- 2) komponenty suitability z reálných dat ---
-    grid = val.get_column("reserve_margin_pct_2025_synthetic").to_numpy().astype(float)
-    cur_points = val.get_column("charging_points_2026_real").to_numpy().astype(float)
-    equity = val.get_column("no_private_parking_index_derived").to_numpy().astype(float)
+    # --- 2) komponenty suitability z reálných dat (na všech zónách) ---
+    grid = allz.get_column("reserve_margin_pct_2025_synthetic").to_numpy().astype(float)
+    cur_points = allz.get_column("charging_points_2026_real").to_numpy().astype(float)
+    equity = allz.get_column("no_private_parking_index_derived").to_numpy().astype(float)
 
     demand_n = minmax(pred)
     grid_n = minmax(grid)
@@ -190,21 +197,22 @@ def main() -> None:
         + WEIGHTS["equity"] * equity_n
     )
 
-    rec_type, rec_acc = recommend_type(train, val, feats)
+    rec_type, _ = recommend_type(train, allz, feats)         # predikce typu pro všechny zóny
+    _, rec_acc = recommend_type(train, val, feats)           # accuracy POCTIVĚ na holdoutu
     print(f"Recommender (typ stanice) accuracy na validaci: {rec_acc:.1%}")
     metrics["recommender_accuracy_pct"] = round(rec_acc * 100, 1)
     with open(SUB / "metrics.json", "w") as f:
         json.dump(metrics, f, ensure_ascii=False, indent=2)
 
-    # --- 3) sestav kontrakt ---
+    # --- 3) sestav kontrakt (celá Praha) ---
     out = pl.DataFrame({
-        "grid_zone_id": val.get_column("grid_zone_id"),
-        "center_lat": val.get_column("center_lat_real"),
-        "center_lon": val.get_column("center_lon_real"),
-        "population": val.get_column("population_census_2021_real"),
+        "grid_zone_id": allz.get_column("grid_zone_id"),
+        "center_lat": allz.get_column("center_lat_real"),
+        "center_lon": allz.get_column("center_lon_real"),
+        "population": allz.get_column("population_census_2021_real"),
         "predicted_demand_2030": np.round(pred, 1),
         "grid_headroom": np.round(grid, 1),
-        "current_stations": val.get_column("charging_stations_2026_real"),
+        "current_stations": allz.get_column("charging_stations_2026_real"),
         "current_points": cur_points.astype(int),
         "coverage_gap": np.round(coverage_gap, 3),
         "equity_weight": np.round(equity, 3),
@@ -216,7 +224,7 @@ def main() -> None:
         "grid_n": np.round(grid_n, 3),
         "equity_n": np.round(equity_n, 3),
     })
-    out = out.with_columns(district_map(val))
+    out = out.with_columns(district_map(allz))
     out = out.with_columns(
         pl.struct(["demand_n", "gap_n", "grid_n", "equity_n"])
         .map_elements(reasons, return_dtype=pl.Utf8)

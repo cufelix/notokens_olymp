@@ -1,0 +1,1 @@
+Náš model ohodnotil pět set třináct zón Prahy. Tato heatmapa ukazuje takzvané suitability skóre. Čím tmavší zóna, tím vyšší predikovaná poptávka v roce dva tisíce třicet a tím větší smysl tam dobíječku postavit.
