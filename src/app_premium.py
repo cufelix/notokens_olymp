@@ -185,10 +185,13 @@ with st.sidebar:
     st.markdown("## Vrstvy mapy")
     show_grid_risk = st.checkbox("Zvýraznit nízkou rezervu sítě", value=False,
                                  help="Zóny s rezervou sítě pod 25 % — kde by síť novou zátěž neunesla.")
+    show_all_need = st.checkbox("Zobrazit VŠECHNY potřebné stanice 2030", value=False,
+                                help="Každá zóna, kde do 2030 vznikne potřeba nové stanice, "
+                                     "obarvená podle doporučeného typu. (Načtení ~pár s.)")
 
     st.divider()
     st.caption("Model: LightGBM · trénink na zones_train, "
-               "skórování na holdoutu zones_validation. Sandbox, ne odevzdání.")
+               "metriky na holdoutu zones_validation. Skóruje se celá Praha (sandbox).")
 
 # aplikuj filtry
 df = df_all[df_all["district"].isin(sel_districts)].copy()
@@ -301,8 +304,46 @@ with tab_map:
             ).add_to(top_fg)
         top_fg.add_to(m)
 
+        # --- VŠECHNY potřebné stanice 2030, obarvené dle typu (na vyžádání) ---
+        TYPE_COLORS = {
+            "residential_ac_small": "#86C97F",   # světle zelená — malé AC
+            "residential_ac_medium": "#2E9E83",  # zelená — větší AC
+            "destination_dc50": "#F5B041",       # oranžová — DC destinace
+            "fast_hub_150": "#E67E22",           # tmavě oranžová — rychlohub
+            "mixed_mobility_hub": "#D73027",     # červená — velký hub
+        }
+        if show_all_need:
+            need = df[(df["recommended_type"] != "none_monitor") & (df["coverage_gap"] > 0.05)]
+            need_fg = folium.FeatureGroup(name=f"Všechny potřebné stanice 2030 ({len(need)})", show=True)
+            for _, r in need.iterrows():
+                folium.CircleMarker(
+                    location=[r["center_lat"], r["center_lon"]],
+                    radius=3.5, weight=0, fill=True,
+                    fill_color=TYPE_COLORS.get(r["recommended_type"], "#888"),
+                    fill_opacity=0.9,
+                    popup=folium.Popup(
+                        f"<b>{r['grid_zone_id']}</b> · {r['district']}<br>"
+                        f"Typ: <b>{r['recommended_type']}</b><br>"
+                        f"{int(r['recommended_ports'])} portů / {int(r['recommended_total_kw'])} kW<br>"
+                        f"Poptávka 2030: {r['predicted_demand_2030']:.0f} EV/den",
+                        max_width=240),
+                ).add_to(need_fg)
+            need_fg.add_to(m)
+
         folium.LayerControl(collapsed=True).add_to(m)
         st_folium(m, use_container_width=True, height=560, returned_objects=[])
+
+        if show_all_need:
+            need_n = len(df[(df["recommended_type"] != "none_monitor") & (df["coverage_gap"] > 0.05)])
+            chips = "".join(
+                f'<span style="display:inline-flex;align-items:center;margin-right:12px;font-size:.8rem">'
+                f'<span style="width:11px;height:11px;border-radius:50%;background:{c};'
+                f'display:inline-block;margin-right:5px"></span>{t}</span>'
+                for t, c in TYPE_COLORS.items())
+            st.markdown(
+                f'<div class="vp-card" style="padding:10px 14px"><b>{need_n} zón</b> potřebuje '
+                f"novou stanici do 2030 (barva = doporučený typ):<br>{chips}</div>",
+                unsafe_allow_html=True)
 
         # legenda — zelená→červená rampa
         st.markdown(

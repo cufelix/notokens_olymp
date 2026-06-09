@@ -1,0 +1,46 @@
+{
+  "video": "/Users/timi/projects/aiolympiada/video/raw/page@4a740f0bf363a6c287befc85b5936a74.webm",
+  "total": 108.63,
+  "scenes": [
+    {
+      "id": "intro",
+      "start": 0.61,
+      "vo": 10.45
+    },
+    {
+      "id": "map",
+      "start": 12.73,
+      "vo": 14.91
+    },
+    {
+      "id": "top",
+      "start": 29.27,
+      "vo": 14.21
+    },
+    {
+      "id": "why",
+      "start": 45.15,
+      "vo": 12.82
+    },
+    {
+      "id": "budget",
+      "start": 61.22,
+      "vo": 9.98
+    },
+    {
+      "id": "value",
+      "start": 72.87,
+      "vo": 11.15
+    },
+    {
+      "id": "model",
+      "start": 87.2,
+      "vo": 13.98
+    },
+    {
+      "id": "outro",
+      "start": 102.82,
+      "vo": 4.78
+    }
+  ]
+}

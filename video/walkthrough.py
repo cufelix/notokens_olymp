@@ -8,7 +8,7 @@ import json, time, subprocess, pathlib
 from playwright.sync_api import sync_playwright
 
 ROOT = pathlib.Path(__file__).resolve().parent
-URL = "http://localhost:8533/"
+URL = "http://localhost:8765/"
 W, H = 1440, 900
 BUFFER = 1.0          # extra seconds per scene after the line ends
 LEAD = 0.6            # settle time after an action before VO "starts"
