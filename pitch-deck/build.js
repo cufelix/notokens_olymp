@@ -30,7 +30,7 @@ const FONT_H = "Georgia";
 const FONT_B = "Calibri";
 const W = 13.333, H = 7.5;
 const DECK = "VoltPlán";
-const TOTAL = 10;
+const TOTAL = 12;
 
 async function icon(IconComponent, color = "#FFFFFF", size = 256) {
   const svg = ReactDOMServer.renderToStaticMarkup(
@@ -252,7 +252,50 @@ const softShadow = () => ({ type: "outer", color: "0E1726", blur: 6, offset: 2, 
   footer(s, 4);
 
   // ============================================================
-  // 5 — AI MODEL (tmavá, jádro techniky)
+  // 5 — DATOVÁ PIPELINE / SCRAPING & SBĚR DAT V ČASE
+  // ============================================================
+  s = pres.addSlide();
+  s.background = { color: C.paper };
+  titleBlock(s, "Datová pipeline", "Sami si data sbíráme — automaticky\na pořád dokola.", 0.7, 0.55, C.ink, 9);
+  s.addText("VoltPlán neběží na jednorázovém exportu. Noční konektory stahují data z 8 zdrojů — přes API i headless scraping tam, kde API není — a samy je čistí, validují a verzují. Tím služba „žije zítra“: model se přeučuje na čerstvých datech bez ruční práce.",
+    { x: 0.72, y: 2.3, w: 11.9, h: 0.95, fontFace: FONT_B, fontSize: 14.5, color: C.gray, align: "left", valign: "top", margin: 0, lineSpacingMultiple: 1.15 });
+
+  // zdroje (scrapované konektory)
+  s.addText("SCRAPOVANÉ ZDROJE  ·  8 KONEKTORŮ", { x: 0.72, y: 3.35, w: 8, h: 0.3, fontFace: FONT_B, bold: true, fontSize: 12, color: C.teal, charSpacing: 1.5, margin: 0 });
+  const srcs = [
+    [I.route, "Golemio API", "parkování, polohy PID, Waze dojezdy", "real-time"],
+    [I.city, "opendata.praha.eu", "RÚIAN, územní plán, landuse", "měsíčně"],
+    [I.users, "ČSÚ census", "populace, byty bez stání", "ročně"],
+    [I.bolt, "PRE / distributor", "kapacita TS, odběrová rezerva", "měsíčně"],
+    [I.clock, "ČHMÚ weather API", "počasí → vliv na nabíjení", "hodinově"],
+    [I.plug, "MPO + provozovatelé", "stávající stanice + využití", "týdně"],
+    [I.map, "OpenStreetMap", "silnice, POI, stožáry VO", "měsíčně"],
+    [I.sync, "Zpětná vazba z appky", "reálné využití → do modelu", "průběžně"],
+  ];
+  const cw = 2.93, cgx = 0.17, cgy = 0.16, cx0 = 0.7, cy0 = 3.75, ch = 1.15;
+  srcs.forEach((p, i) => {
+    const col = i % 4, row = Math.floor(i / 4);
+    const x = cx0 + col * (cw + cgx), y = cy0 + row * (ch + cgy);
+    s.addShape(pres.shapes.RECTANGLE, { x, y, w: cw, h: ch, fill: { color: C.card }, line: { color: C.line, width: 1 }, shadow: softShadow() });
+    s.addShape(pres.shapes.RECTANGLE, { x, y, w: 0.08, h: ch, fill: { color: C.teal }, line: { type: "none" } });
+    iconBadge(s, p[0], x + 0.22, y + 0.22, 0.6, C.ink);
+    s.addText(p[1], { x: x + 0.95, y: y + 0.16, w: cw - 1.05, h: 0.3, fontFace: FONT_B, bold: true, fontSize: 12, color: C.ink, margin: 0 });
+    s.addText(p[3], { x: x + 0.95, y: y + 0.44, w: cw - 1.05, h: 0.22, fontFace: FONT_B, bold: true, fontSize: 8.5, color: C.voltD, charSpacing: 1, margin: 0 });
+    s.addText(p[2], { x: x + 0.22, y: y + 0.72, w: cw - 0.35, h: 0.38, fontFace: FONT_B, fontSize: 10, color: C.gray, margin: 0, valign: "top", lineSpacingMultiple: 0.98 });
+  });
+
+  // pipeline tok
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.7, y: 6.45, w: 11.95, h: 0.62, fill: { color: C.ink }, line: { type: "none" }, shadow: softShadow() });
+  const flow = ["Scraping / ingest", "Čištění + validace", "Anti-leakage guard", "Feature store (verzováno)", "Re-train modelu", "Nové skóre v appce"];
+  flow.forEach((t, i) => {
+    const x = 0.95 + i * 1.97;
+    s.addText(t, { x, y: 6.45, w: 1.75, h: 0.62, fontFace: FONT_B, bold: true, fontSize: 10.5, color: "FFFFFF", align: "center", valign: "middle", margin: 0, lineSpacingMultiple: 0.95 });
+    if (i < flow.length - 1) s.addText("›", { x: x + 1.62, y: 6.45, w: 0.4, h: 0.62, fontFace: FONT_H, bold: true, fontSize: 18, color: C.volt, align: "center", valign: "middle", margin: 0 });
+  });
+  footer(s, 5);
+
+  // ============================================================
+  // 6 — AI MODEL (tmavá, jádro techniky)
   // ============================================================
   s = pres.addSlide();
   s.background = { color: C.ink };
@@ -288,10 +331,10 @@ const softShadow = () => ({ type: "outer", color: "0E1726", blur: 6, offset: 2, 
     s.addImage({ data: I.voltBolt, x: 8.85, y: y + 0.02, w: 0.28, h: 0.28 });
     s.addText(t, { x: 9.25, y: y - 0.05, w: 3.15, h: 1.0, fontFace: FONT_B, fontSize: 12, color: "FFFFFF", margin: 0, valign: "top", lineSpacingMultiple: 1.1 });
   });
-  footer(s, 5, true);
+  footer(s, 6, true);
 
   // ============================================================
-  // 6 — VÝSLEDKY + DEMO
+  // 7 — VÝSLEDKY + DEMO
   // ============================================================
   s = pres.addSlide();
   s.background = { color: C.paper };
@@ -323,10 +366,10 @@ const softShadow = () => ({ type: "outer", color: "0E1726", blur: 6, offset: 2, 
     s.addText(p[0], { x: x + 0.05, y: 4.85, w: 1.5, h: 0.7, fontFace: FONT_H, bold: true, fontSize: 23, color: C.volt, align: "center", margin: 0, valign: "middle" });
     s.addText(p[1], { x: x + 0.05, y: 5.65, w: 1.5, h: 0.7, fontFace: FONT_B, fontSize: 11, color: C.grayL, align: "center", margin: 0, valign: "top", lineSpacingMultiple: 1.05 });
   });
-  footer(s, 6);
+  footer(s, 7);
 
   // ============================================================
-  // 7 — BYZNYS
+  // 8 — BYZNYS
   // ============================================================
   s = pres.addSlide();
   s.background = { color: C.paper };
@@ -353,10 +396,10 @@ const softShadow = () => ({ type: "outer", color: "0E1726", blur: 6, offset: 2, 
     s.addText(p[1], { x: x + 0.3, y: by0 + 1.2, w: bw - 0.55, h: 0.6, fontFace: FONT_H, bold: true, fontSize: 15, color: C.ink, margin: 0, valign: "top" });
     s.addText(p[2], { x: x + 0.3, y: by0 + 1.78, w: bw - 0.5, h: 1.35, fontFace: FONT_B, fontSize: 12, color: C.gray, margin: 0, valign: "top", lineSpacingMultiple: 1.1 });
   });
-  footer(s, 7);
+  footer(s, 8);
 
   // ============================================================
-  // 8 — NÁŠ ÚHEL + ZAHRANIČNÍ INSPIRACE
+  // 9 — NÁŠ ÚHEL + ZAHRANIČNÍ INSPIRACE
   // ============================================================
   s = pres.addSlide();
   s.background = { color: C.ink };
@@ -388,10 +431,10 @@ const softShadow = () => ({ type: "outer", color: "0E1726", blur: 6, offset: 2, 
     { text: "mobilitu × energetiku", options: { bold: true, color: C.volt } },
     { text: ": rezerva trafostanic z PRE vrstvy + equity (byty bez stání) + scénáře růstu EV + vysvětlení „proč tady“. To samotná zahraniční tabulka neumí.", options: { color: "FFFFFF" } },
   ], { x: 2.2, y: 5.28, w: 10.2, h: 1.0, fontFace: FONT_B, fontSize: 13.5, align: "left", valign: "top", margin: 0, lineSpacingMultiple: 1.12 });
-  footer(s, 8, true);
+  footer(s, 9, true);
 
   // ============================================================
-  // 9 — ETIKA
+  // 10 — ETIKA (čtyři oblasti)
   // ============================================================
   s = pres.addSlide();
   s.background = { color: C.paper };
@@ -416,10 +459,40 @@ const softShadow = () => ({ type: "outer", color: "0E1726", blur: 6, offset: 2, 
     { text: "Cold-start skóruje 2× — ", options: { bold: true, color: C.voltD } },
     { text: "technicky (málo dat o okraji) i eticky (spravedlnost). U nás je to jeden a tentýž mechanismus.", options: { color: C.gray } },
   ], { x: 0.7, y: 6.5, w: 11.9, h: 0.5, fontFace: FONT_B, italic: true, fontSize: 13, align: "left", margin: 0 });
-  footer(s, 9);
+  footer(s, 10);
 
   // ============================================================
-  // 10 — TÝM + CLOSING (tmavá)
+  // 11 — JAK ETIKA FUNGUJE V SYSTÉMU (mechanismy)
+  // ============================================================
+  s = pres.addSlide();
+  s.background = { color: C.ink };
+  s.addShape(pres.shapes.OVAL, { x: 10.2, y: -2.2, w: 5.2, h: 5.2, fill: { color: C.ink2 }, line: { type: "none" } });
+  titleBlock(s, "Etika zabudovaná v produktu", "Etika není slide navíc —\nje to kód, který běží.", 0.7, 0.55, "FFFFFF");
+  s.addText("Každé ze čtyř rizik má v systému konkrétní mechanismus. Nejsou to sliby do pitche — jsou to vlastnosti, které jsou v produktu vidět a dají se zkontrolovat.",
+    { x: 0.72, y: 1.95, w: 11.9, h: 0.7, fontFace: FONT_B, fontSize: 14, color: C.grayL, align: "left", valign: "top", margin: 0, lineSpacingMultiple: 1.12 });
+
+  const mech = [
+    [I.scale, "Férovost ve skóre", "equity_weight = 15 % suitability. Čtvrti s byty bez stání dostávají prioritu přímo ve vzorci → cold-start spirálu lámeme matematicky, ne dobrou vůlí."],
+    [I.warn, "Indikátor jistoty", "Zóny s řídkými daty dostanou nižší confidence a jsou v mapě označené. Model neříká „nevím“ potichu — řekne to nahlas."],
+    [I.users, "Člověk rozhoduje", "Doporučení = návrh pro úředníka, ne příkaz. Každé skóre má audit log (vstupy + verze modelu) → rozhodnutí je dohledatelné."],
+    [I.chart, "Pásmo, ne jedno číslo", "Predikce 2030 jako 3 scénáře růstu EV (konzervativní / střední / ambiciózní). Nejistotu komunikujeme, neschováváme."],
+    [I.shield, "Minimum dat (GDPR)", "Pracujeme jen s agregáty na úroveň zóny a sítě. Žádná osobní data, žádné sledování jednotlivých vozidel ani lidí."],
+    [I.bulb, "Vysvětlitelnost", "U každé zóny „proč tady“ (top důvody + feature importance). Žádný black-box — město i občan vidí, na čem skóre stojí."],
+  ];
+  const mw = 3.92, mgx = 0.18, mgy = 0.18, mx0 = 0.7, my0 = 2.85, mh = 1.78;
+  mech.forEach((p, i) => {
+    const col = i % 3, row = Math.floor(i / 3);
+    const x = mx0 + col * (mw + mgx), y = my0 + row * (mh + mgy);
+    s.addShape(pres.shapes.RECTANGLE, { x, y, w: mw, h: mh, fill: { color: C.ink2 }, line: { type: "none" }, shadow: shadow() });
+    s.addShape(pres.shapes.RECTANGLE, { x, y, w: mw, h: 0.08, fill: { color: C.volt }, line: { type: "none" } });
+    iconBadge(s, p[0], x + 0.26, y + 0.28, 0.66, C.voltD);
+    s.addText(p[1], { x: x + 1.05, y: y + 0.32, w: mw - 1.25, h: 0.6, fontFace: FONT_H, bold: true, fontSize: 14, color: "FFFFFF", margin: 0, valign: "middle" });
+    s.addText(p[2], { x: x + 0.28, y: y + 1.0, w: mw - 0.5, h: 0.72, fontFace: FONT_B, fontSize: 10.5, color: C.grayL, margin: 0, valign: "top", lineSpacingMultiple: 1.06 });
+  });
+  footer(s, 11, true);
+
+  // ============================================================
+  // 12 — TÝM + CLOSING (tmavá)
   // ============================================================
   s = pres.addSlide();
   s.background = { color: C.ink };

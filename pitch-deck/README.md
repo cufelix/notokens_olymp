@@ -10,9 +10,13 @@ NODE_PATH=~/projects/misa/node_modules node build.js   # → VoltPlan-pitch.pptx
 (Závislosti `pptxgenjs`, `react`, `react-dom`, `sharp`, `react-icons` se berou z misa
 `node_modules` přes `NODE_PATH`. Případně `npm i` lokálně.)
 
-## Struktura (10 slidů, dle checklistu v `BRIEF.md`)
-1. Titul · 2. Problém & zákazník · 3. Řešení · 4. Data · 5. AI model (jádro techniky) ·
-6. Výsledky & živé demo · 7. Byznys · 8. Náš úhel & světový trend · 9. Etika · 10. Tým
+## Struktura (12 slidů, dle checklistu v `BRIEF.md`)
+1. Titul · 2. Problém & zákazník · 3. Řešení · 4. Data · 5. Datová pipeline (scraping & sběr dat v čase) ·
+6. AI model (jádro techniky) · 7. Výsledky & živé demo · 8. Byznys · 9. Náš úhel & světový trend ·
+10. Etika (4 oblasti) · 11. Etika zabudovaná v produktu (mechanismy) · 12. Tým
+
+> Pozn.: konektory na slide 5 (Golemio, ČHMÚ, PRE, ČSÚ, OSM…) a kadence scrapingu jsou
+> ilustrativní návrh pipeline — sedí na reálné pražské zdroje, ale samotný scraper zatím neběží.
 
 ## Čísla v decku = reálné výstupy modelu
 Pochází z `src/train_demand.py` + `src/generate_scores.py` (stav 2026-06-09):

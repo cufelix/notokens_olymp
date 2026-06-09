@@ -17,6 +17,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import polars as pl
 import streamlit as st
+from folium.plugins import HeatMap
 from streamlit_folium import st_folium
 
 # ----------------------------------------------------------------------------
@@ -205,21 +206,30 @@ with tab_map:
     col_map, col_table = st.columns([1.55, 1])
 
     with col_map:
-        st.markdown("### Suitability mapa Prahy")
+        st.markdown("### Suitability heatmapa Prahy")
         m = folium.Map(
             location=[df["center_lat"].mean(), df["center_lon"].mean()],
             zoom_start=11, tiles="CartoDB positron", control_scale=True,
         )
 
+        # --- HLAVNÍ VRSTVA: heatmapa vážená suitability skóre ---
+        heat = [[r["center_lat"], r["center_lon"], float(r["suitability_score"]) / 100.0]
+                for _, r in df.iterrows()]
+        HeatMap(
+            heat, name="Suitability heatmapa", radius=24, blur=18, min_opacity=0.35, max_zoom=13,
+            gradient={0.0: "#E9F2EE", 0.35: "#9CCBB7", 0.65: "#3E9E80", 1.0: "#16513F"},
+        ).add_to(m)
+
+        # --- detailní zóny (popup "proč") jako přepínatelná vrstva ---
+        zones_fg = folium.FeatureGroup(name="Zóny — detail (popup)", show=False)
         for _, r in df.iterrows():
             low_grid = r["grid_headroom"] < 25
             folium.CircleMarker(
                 location=[r["center_lat"], r["center_lon"]],
-                radius=5 + (r["suitability_score"] / 100) * 7,
-                color="#ffffff", weight=0.6,
-                fill=True,
+                radius=4 + (r["suitability_score"] / 100) * 6,
+                color="#ffffff", weight=0.5, fill=True,
                 fill_color=(DANGER if (show_grid_risk and low_grid) else score_color(r["suitability_score"])),
-                fill_opacity=0.85,
+                fill_opacity=0.9,
                 popup=folium.Popup(
                     f"<b>{r['grid_zone_id']}</b> · {r['district']}<br>"
                     f"<b>Suitability: {r['suitability_score']:.0f}/100</b><br>"
@@ -230,32 +240,38 @@ with tab_map:
                     f"<i>Proč: {r['top_reasons']}</i>",
                     max_width=270,
                 ),
-            ).add_to(m)
+            ).add_to(zones_fg)
+        zones_fg.add_to(m)
 
-        # TOP-N očíslované kotvy
+        # --- TOP-N očíslované kotvy (vždy navrchu) ---
+        top_fg = folium.FeatureGroup(name=f"TOP {top_n} doporučení", show=True)
         for i, r in top.iterrows():
             folium.Marker(
                 location=[r["center_lat"], r["center_lon"]],
+                tooltip=f"#{i+1} · {r['grid_zone_id']} · skóre {r['suitability_score']:.0f}",
                 icon=folium.DivIcon(html=(
                     f'<div style="background:{ACCENT};color:#fff;border-radius:50%;'
-                    f'width:22px;height:22px;line-height:22px;text-align:center;'
-                    f'font-size:11px;font-weight:700;border:2px solid #fff;">{i+1}</div>')),
-            ).add_to(m)
+                    f'width:24px;height:24px;line-height:24px;text-align:center;'
+                    f'font-size:11px;font-weight:700;border:2px solid #fff;'
+                    f'box-shadow:0 1px 4px rgba(0,0,0,.35)">{i+1}</div>')),
+            ).add_to(top_fg)
+        top_fg.add_to(m)
 
+        folium.LayerControl(collapsed=True).add_to(m)
         st_folium(m, use_container_width=True, height=560, returned_objects=[])
 
         # legenda
         st.markdown(
             f'<div style="display:flex;gap:18px;align-items:center;font-size:.82rem;color:{MUTED}">'
-            f'<span>Vhodnost:</span>'
-            f'<span><span style="display:inline-block;width:12px;height:12px;background:{score_color(15)};'
+            f'<span><b>Suitability:</b></span>'
+            f'<span><span style="display:inline-block;width:12px;height:12px;background:#9CCBB7;'
             f'border-radius:3px;margin-right:5px"></span>nízká</span>'
-            f'<span><span style="display:inline-block;width:12px;height:12px;background:{score_color(55)};'
+            f'<span><span style="display:inline-block;width:12px;height:12px;background:#3E9E80;'
             f'border-radius:3px;margin-right:5px"></span>střední</span>'
-            f'<span><span style="display:inline-block;width:12px;height:12px;background:{score_color(95)};'
+            f'<span><span style="display:inline-block;width:12px;height:12px;background:#16513F;'
             f'border-radius:3px;margin-right:5px"></span>vysoká</span>'
-            f'<span style="margin-left:8px"><span style="display:inline-block;width:12px;height:12px;'
-            f'background:{DANGER};border-radius:3px;margin-right:5px"></span>nízká rezerva sítě</span>'
+            f'<span style="margin-left:6px;color:{ACCENT}">● TOP {top_n} = očíslované špendlíky '
+            "(přepínač vrstev vpravo nahoře → detail zón s popupem „proč“)</span>"
             "</div>",
             unsafe_allow_html=True,
         )

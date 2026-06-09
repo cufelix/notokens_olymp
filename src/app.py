@@ -102,7 +102,7 @@ with col3:
     st.metric("Max poptávka", f"{df['estimated_ev_count_2030_synthetic'].max():.0f} EV/den")
 
 with col4:
-    high_demand = len(df[df["estimated_ev_count_2030_synthetic"] > 50])
+    high_demand = df.filter(pl.col("estimated_ev_count_2030_synthetic") > 50).height
     st.metric("Zóny s poptávkou >50", high_demand)
 
 st.divider()
