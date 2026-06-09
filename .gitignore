@@ -1,4 +1,5 @@
 data/participants/
+.~lock.*#
 data/**/*.csv
 *.parquet
 submissions/*.csv

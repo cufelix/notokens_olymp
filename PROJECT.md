@@ -33,9 +33,9 @@ vlastní holdout). Zákazník i energetická komunita/distributor. Plný plán `
 <!-- AUTO:INVENTORY (generuje refresh-project-map — needituj ručně) -->
 **Stack:** Python
 
-**Adresáře:** `.github`, `data`, `notebooks`, `pitch`, `src`, `submissions`, `zadani`
+**Adresáře:** `.github`, `data`, `pitch`, `src`, `submissions`, `zadani`
 
-**Soubory:** `.mcp.json`, `.mcp.json.disabled`, `BRIEF.md`, `CLAUDE.md`, `CONCEPT-VoltPlan.md`, `DATA-MAP.md`, `HACKATHON-PLAN.md`, `HARDWARE.md`, `README.md`, `SETUP.md`, `requirements.txt`
+**Soubory:** `.mcp.json`, `.mcp.json.disabled`, `APP-SPEC.md`, `BRIEF.md`, `BUSINESS-MODEL-DETAIL.md`, `CLAUDE.md`, `CONCEPT-VoltPlan.md`, `DATA-MAP.md`, `DYNAMIC-PRICING.md`, `FINISH-PROMPT.md`, `HACKATHON-PLAN.md`, `HARDWARE.md`, `MENTOR-SESSION-PREP.md`, `PITCH-ONE-PAGE.md`, `PITCH-ONE-PAGE.txt`, `PREMIUM_GUIDE.md`, `README.md`, `READY.md`, `RUN.md`, `SETUP.md`, `START-HERE.md`, `TEAMFLOW.md`, `TECHNICAL-SUMMARY.md`, `requirements.txt`
 
 _Refreshed: 2026-06-09 · `refresh-project-map`_
 <!-- /AUTO:INVENTORY -->

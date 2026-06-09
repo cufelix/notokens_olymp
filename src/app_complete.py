@@ -29,7 +29,7 @@ st.set_page_config(
 )
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-DATA = ROOT / "data" / "participants"
+DATA = ROOT / "data" / "participants" / "core" if (ROOT / "data" / "participants" / "core").exists() else ROOT / "data" / "participants"
 SUB = ROOT / "submissions" / "sample_submission.csv"
 
 # ============================================================================
