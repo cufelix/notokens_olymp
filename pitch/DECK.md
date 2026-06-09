@@ -18,15 +18,17 @@
 - Poctivost: data jsou modelová (sandbox), validujeme vlastním holdoutem, ne soutěží o skóre.
 
 ## Slide 3 — AI model: proč je to OPRAVDU AI a jak víme, že funguje ⭐
+**Spusť:** `python src/train_demand.py` → čísla z consolu.
 - **Predikce poptávky/zátěže = LightGBM** (vlastní model), featury = poměry (byty bez stání/celkem, hustota…).
-- **Doložené překonání triviálního pravidla** (na validaci): MAE LightGBM **[DOPLNIT]** vs „∝ populace" **[DOPLNIT]**
-  → o **[DOPLNIT] %** lépe; **Precision@50 = [DOPLNIT]**. Ne tabulka — model najde i méně očekávané zóny.
+- **Doložené překonání triviálního pravidla** (na validaci): MAE LightGBM **[DOPLNIT z consolu]** vs „∝ populace" **[DOPLNIT z consolu]**
+  → o **[DOPLNIT] %** lépe; **Precision@50 = [DOPLNIT z consolu]**. Ne tabulka — model najde i méně očekávané zóny.
 - Vysvětlíme **kdy model platí a kdy ne** (nejistota → pásmo scénářů).
 
 ## Slide 4 — Výsledky a živá ukázka (V2G „aha")
+**Spusť:** `streamlit run src/app.py` + screenshot. Pak `python src/v2g.py` → čísla.
 - **[ŽIVÉ DEMO / záloha screenshot]** — mapa Prahy obarvená predikovanou poptávkou.
 - **Diferenciátor:** časový graf zátěž vs. rezerva **s/bez řízeného nabíjení + V2G** →
-  metrika **„[DOPLNIT] zabráněných přetížení / [DOPLNIT] kWh vráceno síti"**. Auto = zdroj, ne jen spotřebič.
+  metrika **„[DOPLNIT z v2g_metrics.csv] % zabráněných přetížení / [DOPLNIT] kWh vráceno síti"**. Auto = zdroj, ne jen spotřebič.
 
 ## Slide 5 — Byznys model (kontinuální služba)
 - Zákazník instituce; **opakovaný příjem**: předplatné MČ/města + **sdílení výnosu z flexibility (V2G)** s energ. komunitou/distributorem.
@@ -34,9 +36,9 @@
 - Návratnost: 1 zabráněné posílení trafa / 1 mrtvá dobíječka ročně → zaplatí se. **Služba = investice.** Škálování: Brno/Plzeň/Ostrava, energetické komunity.
 
 ## Slide 6 — Náš úhel + zahraniční inspirace lokalizovaná na Prahu
-- **Trend ze světa:** **[DOPLNIT — např. Utrecht „We Drive Solar" obousměrné nabíjení / UK Octopus dynamické tarify + V2G]**.
-- Proč sedí na Prahu: Pražské společenství pro OZE + pilot PRE + cíl 23 000 budov s OZE → V2G dává flotile a čtvrti hodnotu.
-- Čím se lišíme od nejzřejmějšího řešení: ne „kam dát hub", ale **KDY/JAK nabíjet a vrátit energii** = propojení mobility a energetiky.
+- **Trend ze světa:** **Utrecht „We Drive Solar" (2023): 60 % vozidel v pilotu schopno V2G; 5 MW flexibility/rok; energetická komunita = investor.**
+- Proč sedí na Prahu: Pražské společenství pro OZE + pilot PRE (Smart Prague) + cíl 23 000 budov s OZE → V2G umožňuje komunitám být producentem, ne jen spotřebitelem.
+- Čím se lišíme od nejzřejmějšího řešení: ostatní dělají „kam dát hub", my řešíme **KDY/JAK nabíjet a vrátit energii** = propojení mobility + energetiky.
 
 ## Slide 7 — Etika (4 oblasti, zabudované)
 1. Chybná predikce → confidence + člověk v kličce + back-testing.
