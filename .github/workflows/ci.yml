@@ -1,0 +1,17 @@
+name: smoke
+on:
+  push:
+  pull_request:
+
+jobs:
+  py-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Syntax check (py_compile)
+        run: python -m compileall -q src
+      - name: Requirements parse
+        run: python -c "import pathlib; [print('ok', l) for l in pathlib.Path('requirements.txt').read_text().splitlines() if l.strip() and not l.startswith('#')][:1]"
