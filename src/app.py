@@ -12,16 +12,16 @@ import streamlit as st
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DATA = ROOT / "data" / "participants"
-SUB = ROOT / "submissions" / "sample_submission.csv"
+SUB = ROOT / "submissions" / "predictions_validation.csv"
 
-st.set_page_config(page_title="VoltPlán — Praha EV dobíjení", layout="wide")
-st.title("⚡ VoltPlán — kam přidat dobíjení v Praze")
-st.caption("Predikce poptávky 2030 po zónách · AIO_PHA-02-PHA")
+st.set_page_config(page_title="VoltPlán — Praha mobilita & energetika", layout="wide")
+st.title("⚡ VoltPlán — chytré nabíjení, síť a V2G v Praze")
+st.caption("Predikce poptávky/zátěže 2030 po zónách · řízené nabíjení + V2G · AIO_PHA-02-PHA")
 
 
 @st.cache_data
 def load():
-    zones = pl.read_csv(next(DATA.rglob("zones_test.csv")), ignore_errors=True)
+    zones = pl.read_csv(next(DATA.rglob("zones_validation.csv")), ignore_errors=True)
     pred = pl.read_csv(SUB) if SUB.exists() else None
     return zones, pred
 
@@ -32,7 +32,7 @@ lat = next((c for c in zones.columns if "lat" in c.lower()), None)
 lon = next((c for c in zones.columns if "lon" in c.lower()), None)
 
 if pred is not None:
-    target = [c for c in pred.columns if c != zid][0]
+    target = next((c for c in pred.columns if c.startswith("pred_")), [c for c in pred.columns if c != zid][0])
     df = zones.join(pred, on=zid, how="left")
     st.sidebar.metric("Zón", df.height)
     st.sidebar.metric("Predikovaný cíl", target)
@@ -56,4 +56,4 @@ if pred is not None:
     st.subheader("Top 20 zón podle predikované poptávky")
     st.dataframe(df.sort(target, descending=True).head(20).to_pandas(), use_container_width=True)
 else:
-    st.warning("Chybí submissions/sample_submission.csv — spusť nejdřív `python src/train_demand.py`.")
+    st.warning("Chybí submissions/predictions_validation.csv — spusť nejdřív `python src/train_demand.py`.")

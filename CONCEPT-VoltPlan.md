@@ -4,6 +4,20 @@
 > **Jedna platforma, která spojuje všechny tři linie zadání do jednoho rozhodnutí:**
 > *predikuj* poptávku → *doporuč* typ → *ochraň* síť — se vestavěnou spravedlností a živým demem.
 
+> ### ⚠ UPDATE 2026-06-09 — nové zadání (čti první, nadřazené textu níž)
+> Zadání se rozšířilo z „kam dát dobíječky" na **udržitelnou mobilitu A energetiku**. Delty:
+> - **V2G (obousměrné nabíjení) + řízené nabíjení = „nejhlubší příležitost".** Headline už není jen
+>   *umístění*, ale **KDY/JAK nabíjet a vrátit energii síti/čtvrti** (auto = zdroj). Mapuje se na
+>   „Grid Optimizer" (Linie C níž) → povyšujeme na jádro + přidáváme V2G.
+> - **Sandbox, ne soutěž.** `zones_test.csv` a `sample_submission.csv` NEEXISTUJÍ → ignoruj zmínky
+>   o „513 test zónách / sample_submission" níž. Validuj vlastním holdoutem / `zones_validation`.
+> - **Zákazník navíc:** distributor (PRE) a **energetická komunita** (Pražské společenství pro OZE) —
+>   sdílení výnosu z flexibility (V2G) je nový byznys argument.
+> - **Bonus za vlastní úhel + zahraniční trend lokalizovaný na Prahu** (V2G Utrecht / dynamické tarify).
+> - „Jedna čistá běžící linie stačí." 4h plán: `HACKATHON-PLAN.md`. Aktuální brief: `BRIEF.md`.
+> Architektura vrstev (Trust → Demand → Matching → Grid/V2G → demo → smyčka) **platí**; jen čti
+> „Grid Optimizer" jako „řízené nabíjení + V2G" a vynech submission/test-zóny.
+
 ---
 
 ## 0 · Shrnutí na jednu obrazovku

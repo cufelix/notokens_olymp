@@ -1,53 +1,53 @@
-# VoltPlán — pitch deck (8 slidů) · AIO_PHA-02-PHA
+# VoltPlán — pitch deck (~8 slidů) · AIO_PHA-02-PHA
 
-> Text předepsaný z `CONCEPT-VoltPlan.md`. `[DOPLNIT]` = čísla od tracku 🅐/🅑 na místě.
-> 3 min mluvení + 2 min Q&A. Slide 3 je nejdůležitější (číslo vs baseline).
-> Stavěj v čem jsi rychlý: Slides / Canva / Gamma / Marp z tohohle .md. Drž navy/cyan.
+> Aktualizováno 2026-06-09 dle nového zadání (mobilita+energetika, V2G, sandbox).
+> `[DOPLNIT]` = čísla od tracku 🅐/🅑. 3 min mluvení + 2 min Q&A. Slide 3 nejdůležitější.
+> Stavěj v Gammě (vlož tenhle markdown → samo nadesignuje). Drž navy/cyan.
 
 ---
 ## Slide 1 — Problém a zákazník
-**Headline:** Praha chce 10 000 dobíječek do 2030. Kam je dát, aby nezůstaly prázdné a nepřetížily síť?
-- Zákazník: **Hl. m. Praha / městská část / Operátor ICT** (+ role: plánovač mobility, energetik PRE).
-- Co je pálí: dobíječky „od oka" → prázdné (mrtvá investice) NEBO přehlédnutá čtvrť; večerní špička hrozí přetížením trafa.
-- Kotva: 59 000 EV (2026), +19 % síť za 2025, Generel: ~180 000 EV / ≥4 500 stanic do 2030.
+**Headline:** Praha propojuje dopravu a energetiku. Kde a KDY nabíjet, aby auta síti pomáhala, ne ji přetížila?
+- Zákazník: **Hl. m. Praha / MČ / Operátor ICT / distributor (PRE) / energetická komunita** (Pražské společenství pro OZE).
+- Co je pálí: večerní špička jde na hranu sítě; dobíječky „od oka" zůstávají prázdné; pomalý přechod na EV.
+- Kotva: 59 000 EV (2026), Klimatický plán → 10 000 stanic do 2030, ~180 000 EV / ≥4 500 stanic (Generel).
 
 ## Slide 2 — Data (reálné vs. modelové)
-- 9 core CSV (~251 MB) + 1,6 GB optional; jednotka = **zóna** (oblast trafostanice).
-- Původ značíme: `_real` (ČSÚ, RÚIAN, PRE, IPR, ČHMÚ…) / `_derived` / `_synthetic` (cíle 2030).
-- **Trust Layer:** čištění, dedup, **kontrola leakage** → ukázat **1 zachycený leakage případ**.
-- Confidence známka A/B/C per zóna (úplnost dat) — propojeno s cold-startem.
+- Bohatý sandbox dataset (zóny TS): `_real` (ČSÚ, RÚIAN, PRE, IPR) / `_derived` / `_synthetic` (cíle 2030).
+- Klíč pro nás: `grid_capacity_and_reserve_2025` + `hourly_*` (zátěž, **rezerva, overload_flag** po hodinách).
+- **Čištění + kontrola leakage** → ukázat **1 zachycený leakage případ** (cíle `_synthetic` nesmí do featur).
+- Poctivost: data jsou modelová (sandbox), validujeme vlastním holdoutem, ne soutěží o skóre.
 
-## Slide 3 — AI model + JAK MĚŘÍME KVALITU ⭐ (nejdůležitější)
-- **Demand Engine = LightGBM** (vlastní natrénovaný model), featury = poměry (byty bez stání/celkem, hustota…), ne absolutní čísla.
-- **Doložené překonání baseline na zones_validation.csv:**
-  - MAE LightGBM **[DOPLNIT]** vs populační baseline **[DOPLNIT]** → o **[DOPLNIT] %** lépe.
-  - **Precision@50 = [DOPLNIT]** (trefíme nejpoptávanější zóny do top 50).
-- Nejistota: scénáře konzervativní/střední/ambiciózní (ne jedno „zaručené" číslo).
+## Slide 3 — AI model: proč je to OPRAVDU AI a jak víme, že funguje ⭐
+- **Predikce poptávky/zátěže = LightGBM** (vlastní model), featury = poměry (byty bez stání/celkem, hustota…).
+- **Doložené překonání triviálního pravidla** (na validaci): MAE LightGBM **[DOPLNIT]** vs „∝ populace" **[DOPLNIT]**
+  → o **[DOPLNIT] %** lépe; **Precision@50 = [DOPLNIT]**. Ne tabulka — model najde i méně očekávané zóny.
+- Vysvětlíme **kdy model platí a kdy ne** (nejistota → pásmo scénářů).
 
-## Slide 4 — Výsledky a živá ukázka
-- **[ŽIVÉ DEMO / záloha screenshot]** — mapa Prahy obarvená predikovanou poptávkou + top zóny.
-- **Matching:** profil zóny → doporučený typ (AC street / DC hub / stožár VO…) + **mapa mezer**.
-- Příklad „méně očekávané, ale sedící" umístění: **[DOPLNIT konkrétní zónu z dat]**.
+## Slide 4 — Výsledky a živá ukázka (V2G „aha")
+- **[ŽIVÉ DEMO / záloha screenshot]** — mapa Prahy obarvená predikovanou poptávkou.
+- **Diferenciátor:** časový graf zátěž vs. rezerva **s/bez řízeného nabíjení + V2G** →
+  metrika **„[DOPLNIT] zabráněných přetížení / [DOPLNIT] kWh vráceno síti"**. Auto = zdroj, ne jen spotřebič.
 
 ## Slide 5 — Byznys model (kontinuální služba)
-- Předplatné MČ ~**19 000 Kč/měs** · celoměstská licence ~**900 000 Kč/rok** · modul Ochrana sítě (PRE) ~**500 000 Kč/rok**.
-- **Opakovaný příjem** + **sběr dat v čase** (nové stanice, registrace EV, obsazenost z pilotu PRE → retrain). Smyčka přes n8n.
-- Návratnost: zabráníme byť 1 mrtvé dobíječce / 1 předčasnému posílení trafa ročně → zaplatí se mnohonásobně. **Služba = investice, ne výdaj.**
+- Zákazník instituce; **opakovaný příjem**: předplatné MČ/města + **sdílení výnosu z flexibility (V2G)** s energ. komunitou/distributorem.
+- **Sběr dat v čase:** nové stanice, registrace EV, obsazenost z pilotu PRE/Golemio, kapacita sítě → retrain (n8n smyčka, popsaná).
+- Návratnost: 1 zabráněné posílení trafa / 1 mrtvá dobíječka ročně → zaplatí se. **Služba = investice.** Škálování: Brno/Plzeň/Ostrava, energetické komunity.
 
-## Slide 6 — Etika (4 oblasti, zabudované)
-1. Chybná predikce → confidence známka + člověk v kličce + čtvrtletní back-testing.
-2. Soukromí → jen agregáty na úrovni zóny (práh min. domácností), žádná individuální data.
-3. **Spravedlnost / cold-start (těžiště):** equity váha + nafouknutá nejistota pro řídké zóny → lámeme sebenaplňující spirálu chudších čtvrtí. Metrika „fairness gap".
-4. Nejistota → pásma + scénáře, rozhodnutí robustní napříč scénáři.
+## Slide 6 — Náš úhel + zahraniční inspirace lokalizovaná na Prahu
+- **Trend ze světa:** **[DOPLNIT — např. Utrecht „We Drive Solar" obousměrné nabíjení / UK Octopus dynamické tarify + V2G]**.
+- Proč sedí na Prahu: Pražské společenství pro OZE + pilot PRE + cíl 23 000 budov s OZE → V2G dává flotile a čtvrti hodnotu.
+- Čím se lišíme od nejzřejmějšího řešení: ne „kam dát hub", ale **KDY/JAK nabíjet a vrátit energii** = propojení mobility a energetiky.
 
-## Slide 7 — Škálování
-- Featury **město-agnostické** (poměry/hustoty) → Brno, Plzeň, Ostrava jen nasypou open data.
-- Jiná infrastruktura: P+R, sdílená mobilita, depa elektrobusů. Síťový efekt sdíleného modelu.
+## Slide 7 — Etika (4 oblasti, zabudované)
+1. Chybná predikce → confidence + člověk v kličce + back-testing.
+2. Soukromí → jen agregáty na úrovni zóny (práh domácností), žádná individuální data.
+3. **Spravedlnost / cold-start (těžiště):** equity váha + nafouknutá nejistota pro řídké zóny → lámeme spirálu chudších čtvrtí.
+4. Nejistota → pásma + scénáře, robustní rozhodnutí.
 
 ## Slide 8 — Tým a shrnutí
-- Tým: **[DOPLNIT jména/role]**. Proč my: **[DOPLNIT — VPS/n8n provozujeme reálně apod.]**.
-- One-liner: *„VoltPlán: predikuj → doporuč → ochraň síť — jedna služba, vestavěná férovost, běžící model."*
+- Tým: **[DOPLNIT jména/role]**. Proč my: **[DOPLNIT]**.
+- One-liner: *„VoltPlán: předpověz → řiď nabíjení → vrať energii (V2G). Auto jako zdroj pro síť i čtvrť."*
 
 ---
-**K odevzdání:** tenhle deck (PDF) · technické shrnutí 1 A4 · `submissions/sample_submission.csv` · odkaz na kód/demo.
-**Q&A připrav:** jak měříte kvalitu (baseline), jak řešíte leakage, jak cold-start, kdo platí a proč.
+**K odevzdání:** deck (PDF) · technické shrnutí 1 A4 · datové výstupy (predikce) · odkaz na kód/demo.
+**Q&A připrav:** proč je to AI ne pravidlo · jak řešíš leakage/cold-start · kdo platí · jak funguje V2G smyčka.

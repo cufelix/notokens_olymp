@@ -1,8 +1,9 @@
 # notokens — VoltPlán · Česká AI Olympiáda 2026 (AIO_PHA-02-PHA)
 
-Tým **notokens**, krajské kolo Praha — AI Startup. Stavíme **VoltPlán**: rozhodovací
-službu pro chytré rozmístění a kapacitní plánování EV dobíjení v Praze (predikce poptávky
-2030 → doporučení typu → ochrana sítě).
+Tým **notokens**, krajské kolo Praha — AI Startup. Téma: **udržitelná mobilita a energetika**.
+Stavíme **VoltPlán** (Linie A): predikce poptávky/zátěže → **řízené nabíjení + V2G** (auto jako
+zdroj pro síť/čtvrť) → chytré umístění. Propojení mobility a energetiky = nejsilnější cesta.
+Data jsou **sandbox** (ne soutěž o skóre) — validujeme vlastním holdoutem.
 
 ## Start (4 hodiny, 3 lidi)
 1. Přečti **`HACKATHON-PLAN.md`** — řídící plán + rozdělení na 3 tratě (🅐 ML / 🅑 demo / 🅒 pitch).
@@ -13,8 +14,8 @@ službu pro chytré rozmístění a kapacitní plánování EV dobíjení v Praz
    uv venv --python 3.11 && source .venv/bin/activate
    uv pip install -r requirements.txt
    python src/profile_data.py      # schéma + leakage guard
-   python src/train_demand.py      # LightGBM + baseline + sample_submission.csv
-   streamlit run src/app.py        # demo
+   python src/train_demand.py      # LightGBM + baseline + predikce na validaci
+   streamlit run src/app.py        # demo (mapa + V2G časový graf)
    ```
 
 ## Struktura

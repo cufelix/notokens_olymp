@@ -1,11 +1,14 @@
-"""train_demand.py — Linie A: predikce poptávky + baseline + submission.
+"""train_demand.py — Linie A: predikce poptávky/zátěže + baseline + interpretace.
+
+SANDBOX (ne soutěž): žádný skrytý test set, žádné odevzdání predikcí. Validuješ si SÁM —
+trénuješ na zones_train.csv, ověřuješ na zones_validation.csv (nebo vlastním holdoutu).
 
 ADAPTIVNÍ: nezná přesné názvy sloupců předem. Sám:
   1. najde cílové sloupce (target_* / *_2030_synthetic),
   2. vyhodí leakage (cíle + sloupce z nich odvozené + ID),
   3. natrénuje LightGBM na vybraný cíl,
   4. změří MAE/RMSE proti baseline (průměr + ∝ populace) + Precision@50 na validaci,
-  5. vyrobí submissions/sample_submission.csv pro test zóny.
+  5. uloží predikce na validační zóny do submissions/predictions_validation.csv (pro demo/mapu).
 
 Spuštění (po rozbalení dat do data/participants/):
     python src/train_demand.py                 # auto-vybere první cíl
@@ -83,8 +86,7 @@ def main() -> None:
     args = ap.parse_args()
 
     train = load("zones_train.csv")
-    val = load("zones_validation.csv")
-    test = load("zones_test.csv")
+    val = load("zones_validation.csv")   # sandbox: vlastní ověření (žádný skrytý test set)
 
     targets = target_cols(train)
     if not targets:
@@ -117,7 +119,7 @@ def main() -> None:
 
     # baseline 1: průměr trénovacího cíle všude
     b_mean = np.full_like(yva, ytr.mean(), dtype=float)
-    # baseline 2: ∝ populace (přeškálovaná na průměr cíle)
+    # baseline 2: ∝ populace (přeškálovaná na průměr cíle) — „triviální pravidlo" k překonání
     popc = population_col(val)
     if popc:
         pv = val.get_column(popc).to_numpy().astype(float)
@@ -130,19 +132,18 @@ def main() -> None:
     for name, p in [("LightGBM", pred), ("baseline-průměr", b_mean), ("baseline-populace", b_pop)]:
         print(f"{name:<16}{mae(yva, p):>12.3f}{rmse(yva, p):>12.3f}{precision_at_k(yva, p):>8.2f}")
     impr = (mae(yva, b_pop) - mae(yva, pred)) / mae(yva, b_pop) * 100
-    print(f"\n>>> NA SLIDE 3: LightGBM má MAE o {impr:.1f} % nižší než populační baseline,"
-          f" P@50={precision_at_k(yva, pred):.2f}.")
+    print(f"\n>>> NA SLIDE 3: LightGBM má MAE o {impr:.1f} % nižší než populační (triviální) baseline,"
+          f" P@50={precision_at_k(yva, pred):.2f} → 'opravdová AI, ne pravidlo'.")
     print("=====================================================")
 
-    # submission na test zóny
+    # predikce na validační zóny → pro demo/mapu a interpretaci (NE odevzdání)
     SUB.mkdir(exist_ok=True)
-    test_pred = model.predict(test.select(feats).to_numpy())
-    zid = next((c for c in test.columns if "grid_zone_id" in c.lower()), test.columns[0])
-    out = pl.DataFrame({zid: test.get_column(zid), target: test_pred})
-    out_path = SUB / "sample_submission.csv"
+    zid = next((c for c in val.columns if "grid_zone_id" in c.lower()), val.columns[0])
+    out = pl.DataFrame({zid: val.get_column(zid), f"pred_{target}": pred, f"true_{target}": yva})
+    out_path = SUB / "predictions_validation.csv"
     out.write_csv(out_path)
-    print(f"\nSubmission → {out_path}  ({out.height} zón)")
-    print("⚠ Sjednoť formát/sloupce s reálným data/participants/**/sample_submission.csv před odevzdáním!")
+    print(f"\nPredikce (validace) → {out_path}  ({out.height} zón) — pro demo/mapu.")
+    print("Tip: feature importance pro interpretaci → model.feature_importances_ (viz notebooks/).")
 
 
 if __name__ == "__main__":

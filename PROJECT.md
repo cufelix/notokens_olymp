@@ -5,18 +5,19 @@
 
 ## Co to dělá
 **Hackathon — Česká AI Olympiáda 2026, linie AI Startup, krajské kolo Praha**
-(zadání `AIO_PHA-02-PHA`). Stavíme AI službu pro **chytré rozmístění a kapacitní
-plánování EV dobíjení v Praze**: predikce poptávky 2030 po zónách + recommender typu
-řešení + hlídání kapacity sítě. Cíl = vyhrát krajské kolo.
+(zadání `AIO_PHA-02-PHA`). Téma (aktualizováno 2026-06-09): **udržitelná mobilita a
+energetika**. Naše cesta = predikce poptávky/zátěže + **řízené nabíjení a V2G** (auto jako
+zdroj pro síť/čtvrť) + chytré umístění. Cíl = vyhrát krajské kolo.
 
-**Orientace:** `BRIEF.md` (úkol + co hodnotí porota) → `CONCEPT-VoltPlan.md` (náš vítězný
-koncept + architektura) → `HARDWARE.md` (HW/trénink/stack) → `DATA-MAP.md` (data) →
-`SETUP.md` (prostředí). Plné zadání + meta-prompty v `zadani/`.
+**Orientace:** `HACKATHON-PLAN.md` (4h plán) → `BRIEF.md` (úkol + co hodnotí porota) →
+`CONCEPT-VoltPlan.md` (koncept + update banner) → `HARDWARE.md` (HW/trénink) → `DATA-MAP.md`
+(data) → `SETUP.md` (prostředí). Plné zadání + meta-prompty v `zadani/`.
 
-## Koncept: VoltPlán
-Předplatitelská rozhodovací platforma — 3 linie zadání jako 1 pipeline: Trust Layer →
-Demand Engine (LightGBM quantile) → Matching Engine (recommender+equity+SHAP) → Grid
-Optimizer (MILP) → What-if explorer (Streamlit) → datová smyčka (n8n). Plný plán v `CONCEPT-VoltPlan.md`.
+## Koncept: VoltPlán (aktualizováno 2026-06-09)
+Téma rozšířeno na **mobilitu + energetiku**. Naše cesta = **Linie A**: predikce → **řízené
+nabíjení + V2G** („nejhlubší příležitost") → umístění. Vrstvy: Trust → Demand (LightGBM) →
+Matching → Grid/V2G → demo → smyčka. **Sandbox, ne soutěž** (žádné test zóny/submission,
+vlastní holdout). Zákazník i energetická komunita/distributor. Plný plán `CONCEPT-VoltPlan.md`.
 
 ## Stav / poznámky
 - 2026-06-09: setup hotový — brief, **koncept VoltPlán**, hardware guide, data-mapa, requirements,
@@ -32,9 +33,9 @@ Optimizer (MILP) → What-if explorer (Streamlit) → datová smyčka (n8n). Pln
 <!-- AUTO:INVENTORY (generuje refresh-project-map — needituj ručně) -->
 **Stack:** Python
 
-**Adresáře:** `data`, `notebooks`, `pitch`, `src`, `submissions`, `zadani`
+**Adresáře:** `.github`, `data`, `notebooks`, `pitch`, `src`, `submissions`, `zadani`
 
-**Soubory:** `.mcp.json`, `.mcp.json.disabled`, `BRIEF.md`, `CLAUDE.md`, `CONCEPT-VoltPlan.md`, `DATA-MAP.md`, `HACKATHON-PLAN.md`, `HARDWARE.md`, `SETUP.md`, `requirements.txt`
+**Soubory:** `.mcp.json`, `.mcp.json.disabled`, `BRIEF.md`, `CLAUDE.md`, `CONCEPT-VoltPlan.md`, `DATA-MAP.md`, `HACKATHON-PLAN.md`, `HARDWARE.md`, `README.md`, `SETUP.md`, `requirements.txt`
 
 _Refreshed: 2026-06-09 · `refresh-project-map`_
 <!-- /AUTO:INVENTORY -->
