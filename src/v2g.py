@@ -134,7 +134,7 @@ def main() -> None:
 
     metrics = v2g_heuristic()
 
-    print("\n📊 VÝSLEDKY (slide 4: V2G „aha" moment):")
+    print("\n📊 VÝSLEDKY (slide 4: V2G 'aha' moment):")
     print(f"   • Přetížení (baseline):        {metrics['overload_hours_baseline']} hodin")
     print(f"   • Přetížení (managed):         {metrics['overload_hours_managed']} hodin")
     print(f"   • Zabráněno:                   {metrics['overload_prevented_pct']:.1f} %")
