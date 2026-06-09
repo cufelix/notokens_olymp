@@ -1,0 +1,217 @@
+═══════════════════════════════════════════════════════════════════════════════
+                            VOLTPLÁN — ONE PAGE PITCH
+═══════════════════════════════════════════════════════════════════════════════
+
+
+PROBLÉM (Problem)
+─────────────────────────────────────────────────────────────────────────────
+
+Praha 2026: 59,000 elektromobilů, cíl 10,000 nových dobíjecích stanic (1 MLD Kč).
+
+TŘI KRITICKÉ VÝZVY:
+
+  1. ENERGETICKÁ
+     ├─ Večerní špička (18–22h): všichni nabíjí = přetížená síť
+     ├─ Trafo na hraně kapacity = riziko blackoutu
+     └─ Distributor musí koupit drahé energie (500 Kč/MWh) = 100 MIL Kč/rok výdaj
+
+  2. INVESTIČNÍ
+     ├─ 1 MLD Kč na 10,000 stanic, ale kde je stavět?
+     ├─ Bez dat → stavíme "od oka"
+     └─ Výsledek: 30% je prázdných (300 MIL Kč zmařeno)
+
+  3. PROPOJENÍ (mobil. + energetika)
+     ├─ Klimatický plán chce je propojit
+     ├─ Ale jak? Auto by mohlo být zdrojem (V2G), ale nikdo to neřeší
+     └─ Chybí nástroj
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ŘEŠENÍ (Solution)
+─────────────────────────────────────────────────────────────────────────────
+
+VoltPlán: SaaS platforma s 3 vrstvami
+
+  VRSTVA 1: PREDIKCE POPTÁVKY (LightGBM model)
+  └─ "Tady (Žižkov) bude 2,000 EV/den v 2030 → postav 5 stanic"
+     "Tam (Petrovice) bude 50 EV/den → postav 1 stanici"
+
+  VRSTVA 2: DYNAMIC PRICING (ekonomická motivace)
+  └─ Ceny elektřiny se mění dle kapacity sítě:
+     • Nízká reserve (špička): 15 Kč/kWh (drahá) → řidič čeká
+     • Vysoká reserve (mild): 3 Kč/kWh (levná) → řidič nabíjí
+     → Řidič se sám rozhoduje (ne direktivy!) → všichni se chávají optimálně
+
+  VRSTVA 3: V2G KOMPENZACE (auto = zdroj)
+  └─ Ve špičce: auto vrátí energii → dostane 400 Kč za 240 kWh
+     → Komunita ji prodá = příjem
+     → Distributor ji nemusí kupovat = ušetření
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ZÁKAZNÍCI + HODNOTA (Customers & Value)
+─────────────────────────────────────────────────────────────────────────────
+
+
+ZÁKAZNÍK #1: ENERGETICKÁ KOMUNITA (Pražské společenství pro OZE)
+───────────────────────────────────────────────────────────────────
+
+  PROBLÉM ZÁKAZNÍKA:
+    "Máme solární panely. V létě máme přebytek. Komu to prodáme?
+     Nevíme, jak to zpeněžit. Chceme být zdrojem pro čtvrť."
+
+  ŘEŠENÍ:
+    VoltPlán říká: "Ve špičce máte 500 aut s V2G v čtvrti.
+     Nabijete je levně, auta vrátí energii, vy ji prodáte."
+
+  KONKRÉTNÍ HODNOTA:
+    ├─ V2G výnosy komunity: 112 MIL Kč/rok
+    ├─ Zaplaceno nám: 50k Kč/měsíc (600k/rok)
+    ├─ Bonus pro komunitu: 30% z V2G (= 37.5 MIL Kč)
+    └─ ROI: 187x (za rok se jí 187x vrátí investice)
+
+  PROČ KOUPI:
+    "Můj byznys je zralý na to. Mám data z PRE, chybí mi jen AI nástroj
+     na plánování. Tato komponenta se mi okamžitě vrátí."
+
+
+ZÁKAZNÍK #2: DISTRIBUTOR ELEKTŘINY (PRE)
+────────────────────────────────────────────
+
+  PROBLÉM ZÁKAZNÍKA:
+    "Ve špičce (20h) má 2x víc poptávky než kapacity.
+     Musím koupit drahé energie na trzích.
+     Hrozí mi blackout. Stojí to 100 MIL Kč/rok."
+
+  ŘEŠENÍ:
+    VoltPlán řídí nabíjení ekonomicky.
+    Špička klesá o 20% → nemusíš koupit drahě.
+
+  KONKRÉTNÍ HODNOTA:
+    ├─ Ušetření na nákupu energií: 100 MIL Kč/rok
+    ├─ Zaplaceno nám: 200k Kč/měsíc (2.4 MIL/rok)
+    ├─ Bonus: Síť je v bezpečí (žádný blackout)
+    └─ ROI: 42x (za měsíc se vrátí)
+
+  PROČ KOUPI:
+    "Máme rozpočet na operační výdaje. Ušetření 100M za rok
+     je 50x více než předplatné. Je to NO-BRAINER."
+
+
+ZÁKAZNÍK #3: MAGISTRÁT PRAHA
+──────────────────────────────
+
+  PROBLÉM ZÁKAZNÍKA:
+    "Mám 1 MLD Kč na 10,000 stanic. Kde je stavět?
+     Klimatický plán má cíl propojit mobilitu a energetiku.
+     Bez dat se to nedá."
+
+  ŘEŠENÍ:
+    VoltPlán říká: "Investuj tady, kde bude poptávka.
+     Auta vrací energii. Klimatický plán se splní efektivně."
+
+  KONKRÉTNÍ HODNOTA:
+    ├─ Ušetření na zbytečných investicích: 270 MIL Kč
+    ├─ Zaplaceno nám: 30k Kč/měsíc (360k/rok)
+    ├─ Bonus: Klimatický plán 2030 se splní 3x efektivněji
+    └─ ROI: 750x (za měsíc se vrátí)
+
+  PROČ KOUPI:
+    "Máme rozpočet, máme cíl, nemáme data. To je přesně co potřebuju.
+     Bez tebe to nezvládnu. S tebou sním efektivně."
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+SHRNUTÍ: ZÁKAZNÍCI × HODNOTA × VÁŠ PŘÍJEM
+─────────────────────────────────────────────────────────────────────────────
+
+┌──────────────────┬──────────────────┬────────────────┬───────────────┐
+│ Zákazník         │ Zaplatí/rok      │ Ušetří/dosáhne │ ROI           │
+├──────────────────┼──────────────────┼────────────────┼───────────────┤
+│ Komunita OZE     │ 600k Kč          │ 112 MIL Kč     │ 187x          │
+│ Distributor PRE  │ 2.4 MIL Kč       │ 100 MIL Kč     │ 42x           │
+│ Magistrát Praha  │ 360k Kč          │ 270 MIL Kč     │ 750x          │
+├──────────────────┼──────────────────┼────────────────┼───────────────┤
+│ VÁŠ PŘÍJEM       │ 3.36 MIL Kč/rok  │ (+ 37.5 MIL z V2G)             │
+│ (CELKEM)         │                  │ = 40+ MIL Kč/rok               │
+└──────────────────┴──────────────────┴────────────────┴───────────────┘
+
+MARKET POTENCIÁL:
+  ├─ Praha: 40 MIL Kč/rok
+  ├─ Brno + Plzeň + Ostrava: +20 MIL Kč/rok
+  ├─ EU (50+ měst): 500+ MIL Kč/rok
+  └─ Scaling timeline: Rok 2–3
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+PROČ TO KOUPI? (Why it's real)
+─────────────────────────────────────────────────────────────────────────────
+
+✅ ZÁKAZNÍCI EXISTUJÍ DNES
+   └─ Nejsou to fantasy buyers. Komunita, PRE, magistrát jsou REÁLNÉ instituce.
+
+✅ PROBLÉM JE AKUTNÍ
+   └─ Praha má miliardu Kč TEĎKA. Rozhodnutí se dělají TEĎKA.
+      Bez VoltPlánu padá 300 MIL Kč na mrtvé investice TEĎKA.
+
+✅ HODNOTA JE MĚŘITELNÁ
+   └─ Není to "nice to have". Je to "must have": 482 MIL Kč ušetření/rok.
+
+✅ BYZNYS SE OPAKUJE
+   └─ Není to projekt. Je to SaaS: měsíční předplatné + opakovaný příjem.
+
+✅ TIMING JE PERFEKTNÍ
+   └─ 2026: 59,000 EV
+      2030: rozhodnutí o 10,000 stanic
+      2026–2030 = vaše okno pro vstup
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ELEVATOR PITCH (30 sekund)
+─────────────────────────────────────────────────────────────────────────────
+
+"VoltPlán je SaaS pro energetické komunity, distributory a města.
+
+Řeší: Kdy a kde nabíjet elektromobily bez přetížení sítě.
+
+Hodnota:
+  • Komunita dostane 112 MIL Kč/rok z V2G flexibility
+  • Distributor ušetří 100 MIL Kč/rok na energiích
+  • Město ušetří 270 MIL Kč na zbytečných investicích
+
+My bereme 1–3%, tedy 40 MIL Kč/rok příjmu.
+
+Praha je pilot. Scaling: 50+ měst v EU.
+
+Hledáme: 5 MIL Kč seed na 12 měsíců."
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+JAK TO FUNGUJE V PRAXI?
+─────────────────────────────────────────────────────────────────────────────
+
+DEN 1: Magistrát si vezme VoltPlán
+  └─ "Postav 10,000 stanic takhle (podle modelu)."
+
+MĚSÍC 1: PRE si vezme VoltPlán
+  └─ "Nastav ceny elektřiny takhle (dynamic pricing)."
+
+MĚSÍC 1: Komunita si vezme VoltPlán
+  └─ "Nabíjej auta takhle, vrací se v špičce."
+
+VÝSLEDEK (rok 1):
+  ├─ Magistrát: stanice stojí → 270 MIL Kč ušetřeno
+  ├─ PRE: špička klesá → 100 MIL Kč ušetřeno
+  ├─ Komunita: V2G běží → 112 MIL Kč příjmu
+  └─ Vy: 3.36 MIL Kč předplatné + 30% z flexibility = 40 MIL Kč
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                    notokens.ai × Česká AI Olympiáda 2026
+═══════════════════════════════════════════════════════════════════════════════
