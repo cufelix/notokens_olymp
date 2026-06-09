@@ -1,102 +1,61 @@
-# VoltPlán — Technické Shrnutí (1 A4)
+# VoltPlán — Technické shrnutí (1 A4)
 
-**Česká AI Olympiáda 2026 · AI Startup · AIO_PHA-02-PHA**
-
----
+**Česká AI Olympiáda 2026 · AI Startup · AIO_PHA-02-PHA · tým notokens**
 
 ## Problém
-Praha staví **10 000 dobíjecích stanic** (1 MLD Kč). Bez dat → **30% bude prázdných** (300 MIL Kč zmařeno).
-- 59 000 EV (2026), cíl 180 000 EV do 2030
-- Rozhodnutí se dělá TEĎKA (2026–2030)
-- Architekt/stavba stanice bez analýzy = hřbitov
+Klimatický plán Prahy cílí na **až 10 000 dobíjecích stanic do 2030** (investice v miliardách).
+Z oborových dat ~**30 % veřejných stanic končí podvyužitých** — staví se bez analýzy poptávky a
+kapacity sítě. **VoltPlán** = B2G datová služba, která AI ohodnotí **každou zónu Prahy**, kde má
+stanice smysl — propojuje **mobilitu** (poptávka) a **energetiku** (rezerva sítě).
 
-**Zákazník:** Magistrát Praha, MČ, operátor ICT (Golemio)
+**Zákazník:** Magistrát HMP / MČ / Operátor ICT (Golemio) / distributor (PRE) / energetická komunita.
 
----
+## Řešení — dva běžící AI modely + skóre
+1. **Regrese (LightGBM):** predikce poptávky po nabíjení 2030 z profilu zóny (60 featur:
+   zástavba, byty bez stání, landuse, MHD, silnice, rezerva TS 2025…).
+2. **Klasifikace (LightGBM):** doporučený typ stanice (6 typů z `candidate_solutions`).
+3. **Suitability 0–100** = 0,40·poptávka + 0,30·mezera_pokrytí + 0,15·rezerva_sítě + 0,15·férovost.
 
-## Řešení: VoltPlán
+Skóruje **celá Praha (2 895 zón, 22 obvodů)**. Výstup: `app_zone_scores.csv` → živé Streamlit demo
+(heatmapy, filtr obvodů, „kam stavět N stanic", popup „proč", rozpočtový optimalizátor, export).
 
-**Jednoduché:** Předpověz EV poptávku v každé zóně → doporučí typ stanice → stavby nejdou k zbytku.
+## Klíčové metriky (na odděleném holdoutu 517 zón)
+| Metrika | Hodnota | Význam |
+|---|---|---|
+| **MAE** | **4,63 EV/den** | o **18,1 %** lépe než triviální populační baseline (5,66) |
+| **Precision@50** | **0,84** | správně určená většina TOP-50 zón |
+| **Recommender accuracy** | **83,8 %** | přesnost doporučení typu stanice |
+| **Anti-leakage** | ✅ kontrolováno kódem | cíle `target_*` / `_2030_synthetic` ≠ featury |
 
-**Technicky:**
-1. **Data:** 70+ features (populace, byty bez stání, transport, grid)
-2. **Model:** LightGBM (2 378 trénovacích zón)
-3. **Predikce:** EV/den v každé zóně (2030)
-4. **Doporučení:** Typ stanice (AC malý / AC střední / DC hub)
-5. **Demo:** Interaktivní mapa + top 50 zón + CSV pro architektury
+## Proč je to opravdová AI (ne tabulka)
+„Hodně lidí → velký hub" zvládne tabulka. Náš model bije populační pravidlo a najde i **méně
+očekávané, ale sedící** zóny (malá populace, ale tranzit + volná síť + žádné stanice). Skóre je
+**plně interpretovatelné** — appka u každé zóny ukáže důvody.
 
----
+## Anti-leakage & validace
+Sdílená `feature_cols` vyřazuje `target_*`, `_2030_synthetic`, `recommended_*`, `risk_overload`,
+ID a textové sloupce (+ runtime `assert`). Trénink na `zones_train`, **metriky jen na holdoutu**
+`zones_validation`. Sandbox — žádné odevzdání skrytých labelů.
 
-## Klíčové Metriky
+## Byznys
+**Roční licence (SaaS)** ~300 tis. Kč/rok. Cílení sníží podíl podvyužitých stanic z ~30 % na ~10 %
+→ z rozpočtu 60 mil. Kč **uchrání ~12 mil. Kč**; licence se vrátí už při jediné nepostavené prázdné
+stanici. **Sběr dat v čase:** pilot PRE/Smart Prague + Golemio. **Škálování:** Brno, Plzeň, Ostrava.
 
-| Metrika | Hodnota | Znamená |
-|---------|---------|---------|
-| **MAE** | 4.7 EV/den | 84% lépe než "poptávka ∝ populace" |
-| **Precision@50** | 0.84 | Top 50 zón správně |
-| **Validation set** | 517 zón | Vlastní holdout (sandbox) |
-| **Leakage guard** | ✅ | Targets ≠ features |
+## Etika (4 oblasti)
+1. **Odpovědnost:** podpora rozhodnutí, ne automat; přetrénovatelné z reálných dat.
+2. **Soukromí:** jen zónové agregáty, žádní jednotlivci.
+3. **Cold-start / spravedlnost:** `equity_weight` zvyšuje skóre okrajových čtvrtí; content-based →
+   řídké zóny nejsou znevýhodněné.
+4. **Nejistota:** predikce 2030 jako **pásmo scénářů** (konzervativní/střední/ambiciózní), ne 1 číslo.
 
----
+## Náš úhel + zahraniční inspirace
+Skórujeme **každou zónu** kompozitem mobilita × energetika (ne jen „kde hub"). Inspirace: EV
+suitability mapy s **grid-headroom** vrstvou (NCSU), **equity** vrstvy (StreetLight/Justice40),
+multikriteriální optimalizace (EV-Planner) — přeneseno na pražská data a Klimatický plán 2030.
 
-## Implementace
+## Stack & reprodukce
+Python · LightGBM · scikit-learn · polars · Streamlit · folium · CPU (~2 min).
+`python src/generate_scores.py` → `streamlit run src/app_premium.py`.
 
-```bash
-python src/train_demand.py    # LightGBM (2,378 zón)
-python src/generate_submission.py  # 517 test zón + predictions
-streamlit run src/app.py      # Demo: mapa + top 50 + statistika
-```
-
-**Výstupy:**
-- `submissions/sample_submission.csv` (grid_zone_id + EV count + station type)
-- Pitch deck (8 slidů) + screenshot/video demota
-
----
-
-## Anti-Leakage
-
-- ✅ Oddělené targets (`target_*_2030_synthetic`)
-- ✅ Automatický DROP v `train_demand.py`
-- ✅ Validace na holdoutu (ne soutěžní labely)
-
----
-
-## Byznys Model
-
-| Segment | Zaplatí | Ušetří | ROI |
-|---------|---------|--------|-----|
-| Magistrát | 30k Kč/měs | 270M/rok | 750x |
-| Operátor ICT | 50k Kč/měs | tracking | – |
-| Distributor | 200k Kč/měs | planning | – |
-
-**Model:** Předplatné (kontinuální) + volitelně data partnership
-
----
-
-## Diferenciátor
-
-**Ostatní:** "Kde dát hub?" (GIS heuristika).
-**Vy:** "KAM stavět aby poptávka byla?" (ML na datech).
-
-LightGBM najde **skryté zóny** (malá populace, ale logistika/tranzit).
-
----
-
-## Etika
-
-1. **Leakage:** Strict separation of targets (kód kontroluje)
-2. **Soukromí:** Jen agregáty zóny (žádné jednotlivce)
-3. **Cold-start:** Vyšší nejistota pro řídké zóny (ne zamlžování)
-4. **Přesnost:** Model ± interval (ne bod odhad)
-
----
-
-## Stack
-
-- **Data:** Polars (lazy CSV), DuckDB (analýza)
-- **ML:** LightGBM + scikit-learn
-- **Demo:** Streamlit + Pydeck (mapa)
-- **Lang:** Python 3.12
-
----
-
-`notokens.ai | 2026-06-09`
+`notokens · 2026-06-09 · data = sandbox (reálná + modelová)`
