@@ -1,0 +1,36 @@
+# VoltPlán — běhové prostředí (AIO_PHA-02-PHA)
+# Instalace přes uv (doporučeno): viz SETUP.md
+# Pozn.: scikit-learn-intelex je x86-only → na Apple Silicon se přeskočí (marker),
+#        na hackathonovém Intel notebooku se nainstaluje a zrychlí sklearn 10–100×.
+
+# --- data handling (velká CSV na 32 GB) ---
+polars>=1.0
+duckdb>=1.0
+pyarrow>=16
+pandas>=2.2
+numpy>=1.26
+
+# --- ML trénink (CPU) ---
+lightgbm>=4.3
+scikit-learn>=1.5
+scikit-learn-intelex>=2024.0 ; platform_machine == "x86_64"
+shap>=0.45
+
+# --- optimalizace sítě (Linie C) ---
+pulp>=2.8
+# ortools>=9.10            # alternativa k PuLP, odkomentuj když chceš
+
+# --- HuggingFace ---
+huggingface-hub>=0.24
+datasets>=2.20
+# tabpfn>=2.0              # tabular foundation model (malá data) — odkomentuj když zkoušíš
+# trackio                 # lehké trackování experimentů (instaluj přes HF skill)
+
+# --- serving / demo ---
+streamlit>=1.36
+pydeck>=0.9
+plotly>=5.22
+
+# --- dev ---
+jupyter>=1.0
+ipykernel>=6.29
