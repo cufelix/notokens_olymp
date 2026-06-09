@@ -239,21 +239,28 @@ with tab_map:
         lon = df["center_lon"].to_numpy()
         dmax = max(df["predicted_demand_2030"].max(), 1e-9)
 
-        def heat_layer(name, weights, gradient, show):
+        def heat_layer(name, weights, gradient, show, radius=16, blur=10):
             fg = folium.FeatureGroup(name=name, show=show)
             HeatMap(
                 [[lat[i], lon[i], float(w)] for i, w in enumerate(weights)],
-                radius=16, blur=10, min_opacity=0.3, max_zoom=13, gradient=gradient,
+                radius=radius, blur=blur, min_opacity=0.25, max_zoom=13, gradient=gradient,
             ).add_to(fg)
             fg.add_to(m)
 
-        # 1) Vhodnost (výchozí) — zelená
+        # zelená→červená rampa (zelená = nízká priorita, super červená = nejvyšší)
+        GREEN_RED = {0.0: "#1A9850", 0.3: "#A6D96A", 0.5: "#FFFFBF",
+                     0.7: "#FDAE61", 0.85: "#F46D43", 1.0: "#D73027"}
+
+        # ★ HLAVNÍ (výchozí): celá Praha jako souvislý heat, zelená→červená dle vhodnosti
+        heat_layer("★ Celá Praha — priorita (zelená→červená)", df["suitability_score"] / 100.0,
+                   GREEN_RED, show=True, radius=30, blur=24)
+        # ① Vhodnost — zelená rampa
         heat_layer("① Vhodnost (suitability)", df["suitability_score"] / 100.0,
-                   {0.0: "#E9F2EE", 0.4: "#9CCBB7", 0.7: "#3E9E80", 1.0: "#16513F"}, show=True)
-        # 2) Projektovaná spotřeba 2030 (poptávka po nabíjení) — oranžová/červená (energie)
+                   {0.0: "#E9F2EE", 0.4: "#9CCBB7", 0.7: "#3E9E80", 1.0: "#16513F"}, show=False)
+        # ② Projektovaná spotřeba 2030 (poptávka po nabíjení) — zelená→červená
         heat_layer("② Projektovaná spotřeba 2030", df["predicted_demand_2030"] / dmax,
-                   {0.0: "#FDEBD0", 0.4: "#F5B041", 0.7: "#E67E22", 1.0: "#A04000"}, show=False)
-        # 3) Potřeba nových stanic 2030 (mezera v pokrytí) — fialová/modrá
+                   GREEN_RED, show=False)
+        # ③ Potřeba nových stanic 2030 (mezera v pokrytí) — fialová/modrá
         heat_layer("③ Potřeba nových stanic 2030", df["coverage_gap"].clip(lower=0),
                    {0.0: "#EAE6F5", 0.4: "#A99CDB", 0.7: "#6C5CE7", 1.0: "#3A2E8C"}, show=False)
 
@@ -297,18 +304,15 @@ with tab_map:
         folium.LayerControl(collapsed=True).add_to(m)
         st_folium(m, use_container_width=True, height=560, returned_objects=[])
 
-        # legenda
+        # legenda — zelená→červená rampa
         st.markdown(
-            f'<div style="display:flex;gap:18px;align-items:center;font-size:.82rem;color:{MUTED}">'
-            f'<span><b>Suitability:</b></span>'
-            f'<span><span style="display:inline-block;width:12px;height:12px;background:#9CCBB7;'
-            f'border-radius:3px;margin-right:5px"></span>nízká</span>'
-            f'<span><span style="display:inline-block;width:12px;height:12px;background:#3E9E80;'
-            f'border-radius:3px;margin-right:5px"></span>střední</span>'
-            f'<span><span style="display:inline-block;width:12px;height:12px;background:#16513F;'
-            f'border-radius:3px;margin-right:5px"></span>vysoká</span>'
-            f'<span style="margin-left:6px;color:{ACCENT}">● TOP {top_n} = očíslované špendlíky '
-            "(přepínač vrstev vpravo nahoře → detail zón s popupem „proč“)</span>"
+            f'<div style="display:flex;gap:14px;align-items:center;font-size:.82rem;color:{MUTED}">'
+            f'<span><b>Priorita:</b></span>'
+            f'<span style="display:inline-block;width:160px;height:12px;border-radius:3px;'
+            f'background:linear-gradient(90deg,#1A9850,#A6D96A,#FFFFBF,#FDAE61,#D73027)"></span>'
+            f'<span>zelená = nízká → <b style="color:#D73027">červená = nejvyšší</b></span>'
+            f'<span style="margin-left:6px;color:{ACCENT}">● očíslované špendlíky = KAM stavět '
+            "(vrstvy přepneš ikonou vpravo nahoře na mapě)</span>"
             "</div>",
             unsafe_allow_html=True,
         )
