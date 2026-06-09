@@ -1,7 +1,7 @@
-# notokens — VoltPlán · Česká AI Olympiáda 2026 (AIO_PHA-02-PHA)
+# notokens — VoltWise · Česká AI Olympiáda 2026 (AIO_PHA-02-PHA)
 
 Tým **notokens**, krajské kolo Praha — AI Startup. Téma: **udržitelná mobilita a energetika**.
-Stavíme **VoltPlán** (Linie A): predikce poptávky/zátěže → **řízené nabíjení + V2G** (auto jako
+Stavíme **VoltWise** (Linie A): predikce poptávky/zátěže → **řízené nabíjení + V2G** (auto jako
 zdroj pro síť/čtvrť) → chytré umístění. Propojení mobility a energetiky = nejsilnější cesta.
 Data jsou **sandbox** (ne soutěž o skóre) — validujeme vlastním holdoutem.
 

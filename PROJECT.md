@@ -33,7 +33,7 @@ vlastní holdout). Zákazník i energetická komunita/distributor. Plný plán `
 <!-- AUTO:INVENTORY (generuje refresh-project-map — needituj ručně) -->
 **Stack:** Python
 
-**Adresáře:** `.github`, `.streamlit`, `data`, `pitch`, `pitch-deck`, `src`, `submissions`, `zadani`
+**Adresáře:** `.github`, `.streamlit`, `data`, `pitch`, `pitch-deck`, `src`, `submissions`, `video`, `zadani`
 
 **Soubory:** `.mcp.json`, `.mcp.json.disabled`, `APP-SPEC.md`, `BRIEF.md`, `BUSINESS-MODEL-DETAIL.md`, `CLAUDE.md`, `CONCEPT-VoltPlan.md`, `DATA-MAP.md`, `DYNAMIC-PRICING.md`, `FINISH-PROMPT.md`, `HACKATHON-PLAN.md`, `HARDWARE.md`, `MENTOR-SESSION-PREP.md`, `PITCH-ONE-PAGE.md`, `PITCH-ONE-PAGE.txt`, `PREMIUM_GUIDE.md`, `README.md`, `READY.md`, `RUN.md`, `SETUP.md`, `START-HERE.md`, `TEAMFLOW.md`, `TECHNICAL-SUMMARY.md`, `requirements.txt`
 

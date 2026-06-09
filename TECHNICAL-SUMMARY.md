@@ -1,11 +1,11 @@
-# VoltPlán — Technické shrnutí (1 A4)
+# VoltWise — Technické shrnutí (1 A4)
 
 **Česká AI Olympiáda 2026 · AI Startup · AIO_PHA-02-PHA · tým notokens**
 
 ## Problém
 Klimatický plán Prahy cílí na **až 10 000 dobíjecích stanic do 2030** (investice v miliardách).
 Z oborových dat ~**30 % veřejných stanic končí podvyužitých** — staví se bez analýzy poptávky a
-kapacity sítě. **VoltPlán** = B2G datová služba, která AI ohodnotí **každou zónu Prahy**, kde má
+kapacity sítě. **VoltWise** = B2G datová služba, která AI ohodnotí **každou zónu Prahy**, kde má
 stanice smysl — propojuje **mobilitu** (poptávka) a **energetiku** (rezerva sítě).
 
 **Zákazník:** Magistrát HMP / MČ / Operátor ICT (Golemio) / distributor (PRE) / energetická komunita.
@@ -40,7 +40,9 @@ ID a textové sloupce (+ runtime `assert`). Trénink na `zones_train`, **metriky
 ## Byznys
 **Roční licence (SaaS)** ~300 tis. Kč/rok. Cílení sníží podíl podvyužitých stanic z ~30 % na ~10 %
 → z rozpočtu 60 mil. Kč **uchrání ~12 mil. Kč**; licence se vrátí už při jediné nepostavené prázdné
-stanici. **Sběr dat v čase:** pilot PRE/Smart Prague + Golemio. **Škálování:** Brno, Plzeň, Ostrava.
+stanici. **Sběr dat v čase:** ingestní pipeline **automaticky stahuje z otevřených API na internetu**
+(Golemio, opendata.praha.eu, PRE/Smart Prague pilot, MPO registr stanic, ČSÚ) → přepočet skóre.
+**Škálování:** Brno, Plzeň, Ostrava.
 
 ## Etika (4 oblasti)
 1. **Odpovědnost:** podpora rozhodnutí, ne automat; přetrénovatelné z reálných dat.

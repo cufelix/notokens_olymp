@@ -1,0 +1,64 @@
+{
+  "video": "/Users/timi/projects/aiolympiada/video/raw2/page@55421940496cfb191f48bbb16b8a98f6.webm",
+  "total": 87.32,
+  "offset": 9.38,
+  "labels": {
+    "intro": "VoltPlán — skóruje celou Prahu: 2 895 zón, 22 obvodů",
+    "heat": "Hlavní heatmapa vhodnosti · zelená → červená",
+    "layers": "Přepínatelné vrstvy: vhodnost / spotřeba 2030 / potřeba stanic",
+    "grid": "Vrstva rizika sítě — kde by síť novou zátěž neunesla",
+    "need": "Všechny potřebné stanice 2030, obarvené dle typu",
+    "top": "TOP doporučené lokality + typ, počet portů a výkon",
+    "why": "Vysvětlitelnost — proč model lokalitu vybral",
+    "budget": "Rozpočtový optimalizátor — nejvíc pokrytí za daný rozpočet",
+    "value": "Hodnota pro město — zabráněná promrhaná investice",
+    "model": "Pod kapotou — LightGBM, anti-leakage, metriky",
+    "ethics": "Etika, nejistota a rozložení suitability skóre"
+  },
+  "scenes": [
+    {
+      "id": "intro",
+      "start": 0.0
+    },
+    {
+      "id": "heat",
+      "start": 5.42
+    },
+    {
+      "id": "layers",
+      "start": 10.62
+    },
+    {
+      "id": "grid",
+      "start": 24.72
+    },
+    {
+      "id": "need",
+      "start": 34.78
+    },
+    {
+      "id": "top",
+      "start": 44.39
+    },
+    {
+      "id": "why",
+      "start": 50.59
+    },
+    {
+      "id": "budget",
+      "start": 58.45
+    },
+    {
+      "id": "value",
+      "start": 64.66
+    },
+    {
+      "id": "model",
+      "start": 72.55
+    },
+    {
+      "id": "ethics",
+      "start": 78.8
+    }
+  ]
+}

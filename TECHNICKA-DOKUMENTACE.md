@@ -1,9 +1,9 @@
-# VoltPlán — Technická dokumentace
+# VoltWise — Technická dokumentace
 
 **Česká AI Olympiáda 2026 · AI Startup · krajské kolo Praha · zadání AIO_PHA-02-PHA**
 **Tým notokens** · *„Praha v pohybu a pod proudem"*
 
-> **VoltPlán** je B2G datová služba, která pomocí AI vyhodnotí pro **každou zónu Prahy**, kde má
+> **VoltWise** je B2G datová služba, která pomocí AI vyhodnotí pro **každou zónu Prahy**, kde má
 > smysl stavět dobíjecí stanice — tak, aby město neutopilo peníze v prázdných dobíječkách a aby
 > nová zátěž nepřetížila lokální síť. Propojuje **mobilitu** (kde a kolik se bude nabíjet)
 > s **energetikou** (kde síť unese zátěž), což je podle zadání nejsilnější možná cesta.
@@ -25,7 +25,7 @@ může lokálně přetížit transformační stanici (TS).
 | **Co ho pálí** | kam z omezeného rozpočtu umístit stanice, aby se využily a síť je unesla |
 | **Dnešní stav ho stojí** | desítky milionů Kč v podvyužitých stanicích + riziko lokálního přetížení |
 
-VoltPlán dává odpověď, kterou tabulka „hodně lidí → velký hub" nedá: **kde se vyplatí stavět
+VoltWise dává odpověď, kterou tabulka „hodně lidí → velký hub" nedá: **kde se vyplatí stavět
 s ohledem na poptávku 2030 × rezervu sítě × mezeru v pokrytí × férovost.**
 
 ---
@@ -55,11 +55,29 @@ Linie A (Nabíjení a síť).
 - **Poctivý limit dat**: většina dnešních veřejných bodů je pomalá (≤ 22 kW), veřejné dobíjení je
   doplňkové → pracujeme s **pásmem scénářů**, ne s jedním zaručeným číslem (§7).
 
+### 2.1 Datová pipeline — automatický sběr dat z internetu (jak služba žije zítra)
+
+VoltWise není statická studie nad jedním CSV. Profil každé zóny se **automaticky obnovuje
+z otevřených datových zdrojů na internetu** — naplánovaná ingestní (research) pipeline data
+stahuje, čistí, normalizuje na zónu a přepočítá skóre:
+
+| Zdroj (online) | Co přináší | Frekvence |
+|---|---|---|
+| **Golemio API** (golemio.cz/data) | parkování, P+R obsazenost, dojezdové doby (Waze), polohy PID | denně / real-time |
+| **opendata.praha.eu** | obecná otevřená městská data (zástavba, vybavenost) | měsíčně |
+| **Smart Prague / PRE pilot** | obsazenost stanic, odběr kWh, doba nabíjení | denně |
+| **MPO registr dobíjecích stanic** | nově zprovozněné veřejné stanice | týdně |
+| **ČSÚ / RÚIAN** | obyvatelstvo, byty, nová výstavba | čtvrtletně |
+
+Pipeline (`requests`/`polars` ETL → feature store → přetrénování modelu) běží jako naplánovaná
+úloha; čerstvá data tak průběžně **zpřesňují predikci poptávky i rezervu sítě**. Tím služba splňuje
+požadavek „sběr a údržba dat v čase" — neexistuje okamžik, kdy by data zastarala bez povšimnutí.
+
 ---
 
 ## 3 · AI jádro — dva běžící modely + skóre
 
-VoltPlán **není jednorázová analýza zakončená grafem**. Jsou to dva natrénované modely, které
+VoltWise **není jednorázová analýza zakončená grafem**. Jsou to dva natrénované modely, které
 v produktu trvale pracují a přepočítají se, jak přicházejí nová data.
 
 ### 3.1 Predikce poptávky (regrese) — *hlavní AI signál*
@@ -147,7 +165,7 @@ Stack: **Python · LightGBM · scikit-learn · polars · Streamlit · folium**. 
 
 ## 6 · Byznys: kontinuální služba, ne studie
 
-| Otázka | VoltPlán |
+| Otázka | VoltWise |
 |---|---|
 | **Zákazník** | Magistrát HMP / MČ / Operátor ICT / **PRE** / energetická komunita |
 | **Opakovaná hodnota** | skóre se **přepočítává**, jak přibývají EV, stanice a mění se rezerva sítě — ne jednorázový výpočet |

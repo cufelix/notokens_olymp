@@ -1,4 +1,4 @@
-"""VoltPlán — rozhodovací dashboard pro plánování EV infrastruktury (Magistrát HMP).
+"""VoltWise — rozhodovací dashboard pro plánování EV infrastruktury (Magistrát HMP).
 
 Čte JEDEN kontraktní soubor `submissions/app_zone_scores.csv` (vyrábí generate_scores.py):
 suitability_score + predikovaná poptávka 2030 + rezerva sítě + mezera v pokrytí + férovost
@@ -25,7 +25,7 @@ from streamlit_folium import st_folium
 # ----------------------------------------------------------------------------
 
 st.set_page_config(
-    page_title="VoltPlán — plánování EV infrastruktury",
+    page_title="VoltWise — plánování EV infrastruktury",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -144,7 +144,7 @@ def score_color(score: float) -> str:
 # ----------------------------------------------------------------------------
 
 st.markdown('<span class="vp-tag">B2G · Magistrát hl. m. Prahy</span>', unsafe_allow_html=True)
-st.markdown("# VoltPlán — kam umístit dobíječky")
+st.markdown("# VoltWise — kam umístit dobíječky")
 st.markdown(
     '<p class="vp-sub">AI ohodnotí každou zónu Prahy <b>skóre vhodnosti 0–100</b> '
     "(čím vyšší, tím lepší místo pro novou dobíječku) a vybere TOP lokality, "
@@ -375,7 +375,7 @@ with tab_map:
         st.download_button(
             "Export doporučení (CSV)",
             export.to_csv(index=False).encode("utf-8"),
-            file_name="voltplan_doporuceni_praha.csv",
+            file_name="voltwise_doporuceni_praha.csv",
             mime="text/csv",
             use_container_width=True,
         )
@@ -444,7 +444,7 @@ with tab_budget:
             f'<div class="vp-card">Z rozpočtu <b>{budget} mil. Kč</b> by cílení místo plošného '
             f'rozmístění mělo uchránit přibližně <b>{avoided:.1f} mil. Kč</b> '
             f'(rozdíl mezi ~30 % a ~10 % podvyužitých stanic).<br><br>'
-            f'Roční licence VoltPlánu (~0,3 mil. Kč) se vrátí už při uchránění '
+            f'Roční licence VoltWiseu (~0,3 mil. Kč) se vrátí už při uchránění '
             f'jediné podvyužité AC stanice.</div>',
             unsafe_allow_html=True,
         )
@@ -524,5 +524,5 @@ with tab_model:
     st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
-st.caption("VoltPlán · AIO_PHA-02-PHA · Česká AI Olympiáda 2026 · tým notokens · "
+st.caption("VoltWise · AIO_PHA-02-PHA · Česká AI Olympiáda 2026 · tým notokens · "
            "data = sandbox (reálná + modelová), výstupy slouží k validaci a interpretaci.")
