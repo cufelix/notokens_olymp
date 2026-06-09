@@ -143,8 +143,20 @@ def score_color(score: float) -> str:
 st.markdown('<span class="vp-tag">B2G · Magistrát hl. m. Prahy</span>', unsafe_allow_html=True)
 st.markdown("# VoltPlán — kam umístit dobíječky")
 st.markdown(
-    '<p class="vp-sub">AI ohodnotí každou zónu Prahy podle predikované poptávky 2030, '
-    "rezervy sítě, mezery v pokrytí a férovosti — aby město neinvestovalo do prázdných stanic.</p>",
+    '<p class="vp-sub">AI ohodnotí každou zónu Prahy <b>skóre vhodnosti 0–100</b> '
+    "(čím vyšší, tím lepší místo pro novou dobíječku) a vybere TOP lokality, "
+    "aby město neinvestovalo do prázdných stanic.</p>",
+    unsafe_allow_html=True,
+)
+st.markdown(
+    f'<div style="background:{SURFACE};border:1px solid {BORDER};border-radius:10px;'
+    f'padding:12px 16px;font-size:.9rem;color:{INK};margin:4px 0 6px">'
+    f'<b>Jak to číst:</b> &nbsp;'
+    f'<span style="color:{ACCENT};font-weight:700">①</span> vlevo si vyber obvod a kolik stanic plánuješ &nbsp;→&nbsp; '
+    f'<span style="color:{ACCENT};font-weight:700">②</span> na mapě jsou <b>tmavě zelené = nejvhodnější</b> zóny, '
+    f'<b>očíslované špendlíky = doporučené lokality</b> &nbsp;→&nbsp; '
+    f'<span style="color:{ACCENT};font-weight:700">③</span> tabulka vpravo je žebříček + tlačítko Export.'
+    "</div>",
     unsafe_allow_html=True,
 )
 st.write("")
@@ -195,7 +207,7 @@ c4.metric("Doporučeno k řešení", f"{top_n}", help="Top zóny dle suitability
 st.write("")
 
 tab_map, tab_budget, tab_model = st.tabs(
-    ["Mapa & doporučení", "Rozpočet & dopad", "Model & metodika"]
+    ["1 · Kde stavět (mapa)", "2 · Za kolik (rozpočet)", "3 · Jak to ví (model)"]
 )
 
 # ============================================================================
@@ -203,6 +215,8 @@ tab_map, tab_budget, tab_model = st.tabs(
 # ============================================================================
 
 with tab_map:
+    st.caption("Mapa vhodnosti všech zón + žebříček TOP doporučených lokalit. "
+               "Tmavě zelená = vysoká vhodnost. Špendlíky = konkrétní doporučené lokality.")
     col_map, col_table = st.columns([1.55, 1])
 
     with col_map:
@@ -216,8 +230,8 @@ with tab_map:
         heat = [[r["center_lat"], r["center_lon"], float(r["suitability_score"]) / 100.0]
                 for _, r in df.iterrows()]
         HeatMap(
-            heat, name="Suitability heatmapa", radius=24, blur=18, min_opacity=0.35, max_zoom=13,
-            gradient={0.0: "#E9F2EE", 0.35: "#9CCBB7", 0.65: "#3E9E80", 1.0: "#16513F"},
+            heat, name="Suitability heatmapa", radius=16, blur=10, min_opacity=0.3, max_zoom=13,
+            gradient={0.0: "#E9F2EE", 0.4: "#9CCBB7", 0.7: "#3E9E80", 1.0: "#16513F"},
         ).add_to(m)
 
         # --- detailní zóny (popup "proč") jako přepínatelná vrstva ---
@@ -383,6 +397,8 @@ with tab_budget:
 # ============================================================================
 
 with tab_model:
+    st.caption("Důkaz, že doporučení stojí na natrénované AI, ne na ručním pravidle — "
+               "metriky proti baseline, anti-leakage a etika.")
     st.markdown("### Jak model funguje a proč je to opravdová AI")
 
     mae = METRICS.get("mae_model")
