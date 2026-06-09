@@ -17,6 +17,7 @@ ANTI-LEAKAGE: cíle target_*_2030_synthetic a sloupce z nich odvozené NEJSOU fe
 """
 from __future__ import annotations
 
+import json
 import pathlib
 import pickle
 
@@ -148,6 +149,28 @@ def main() -> None:
     with open(SUB / "lgbm_model.pkl", "wb") as f:
         pickle.dump(model, f)
 
+    # --- metriky vs baseline (na holdoutu, pro tab Model & metodika) ---
+    yva = val.get_column(TARGET).to_numpy().astype(float)
+    pop = val.get_column("population_census_2021_real").to_numpy().astype(float)
+    b_pop = pop / pop.mean() * ytr.mean()  # triviální pravidlo ∝ populace
+
+    def _mae(a, b):
+        return float(np.mean(np.abs(a - b)))
+
+    def _p_at_k(y, p, k=50):
+        k = min(k, len(y))
+        return len(set(np.argsort(y)[-k:]) & set(np.argsort(p)[-k:])) / k
+
+    mae_model, mae_base = _mae(yva, pred), _mae(yva, b_pop)
+    metrics = {
+        "mae_model": round(mae_model, 2),
+        "mae_baseline_pop": round(mae_base, 2),
+        "mae_improvement_pct": round((mae_base - mae_model) / mae_base * 100, 1),
+        "precision_at_50": round(_p_at_k(yva, pred), 2),
+        "n_val_zones": int(val.height),
+        "n_features": len(feats),
+    }
+
     # --- 2) komponenty suitability z reálných dat ---
     grid = val.get_column("reserve_margin_pct_2025_synthetic").to_numpy().astype(float)
     cur_points = val.get_column("charging_points_2026_real").to_numpy().astype(float)
@@ -169,6 +192,9 @@ def main() -> None:
 
     rec_type, rec_acc = recommend_type(train, val, feats)
     print(f"Recommender (typ stanice) accuracy na validaci: {rec_acc:.1%}")
+    metrics["recommender_accuracy_pct"] = round(rec_acc * 100, 1)
+    with open(SUB / "metrics.json", "w") as f:
+        json.dump(metrics, f, ensure_ascii=False, indent=2)
 
     # --- 3) sestav kontrakt ---
     out = pl.DataFrame({

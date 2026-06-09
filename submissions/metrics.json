@@ -1,0 +1,9 @@
+{
+  "mae_model": 4.63,
+  "mae_baseline_pop": 5.66,
+  "mae_improvement_pct": 18.1,
+  "precision_at_50": 0.84,
+  "n_val_zones": 517,
+  "n_features": 60,
+  "recommender_accuracy_pct": 83.8
+}

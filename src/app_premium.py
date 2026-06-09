@@ -8,6 +8,7 @@ suitability_score + predikovaná poptávka 2030 + rezerva sítě + mezera v pokr
 """
 from __future__ import annotations
 
+import json
 import pathlib
 
 import folium
@@ -97,6 +98,17 @@ st.markdown(f"""
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SCORES = ROOT / "submissions" / "app_zone_scores.csv"
+METRICS_FILE = ROOT / "submissions" / "metrics.json"
+
+
+@st.cache_data
+def load_metrics() -> dict:
+    if METRICS_FILE.exists():
+        return json.loads(METRICS_FILE.read_text())
+    return {}  # fallback — tab Model ukáže "—"
+
+
+METRICS = load_metrics()
 
 
 @st.cache_data
@@ -357,10 +369,17 @@ with tab_budget:
 with tab_model:
     st.markdown("### Jak model funguje a proč je to opravdová AI")
 
+    mae = METRICS.get("mae_model")
+    impr = METRICS.get("mae_improvement_pct")
+    p50 = METRICS.get("precision_at_50")
+    racc = METRICS.get("recommender_accuracy_pct")
     m1, m2, m3 = st.columns(3)
-    m1.metric("MAE LightGBM", "4.70 EV/den", "−17 % vs. populační baseline", delta_color="inverse")
-    m2.metric("Precision@50", "0.84", "shoda TOP-50 zón")
-    m3.metric("Recommender typu stanice", "83.8 %", "přesnost na holdoutu")
+    m1.metric("MAE LightGBM", f"{mae:.2f} EV/den" if mae is not None else "—",
+              f"−{impr:.0f} % vs. populační baseline" if impr is not None else None,
+              delta_color="inverse")
+    m2.metric("Precision@50", f"{p50:.2f}" if p50 is not None else "—", "shoda TOP-50 zón")
+    m3.metric("Recommender typu stanice", f"{racc:.1f} %" if racc is not None else "—",
+              "přesnost na holdoutu")
 
     st.markdown(
         f'<div class="vp-card">'
@@ -368,8 +387,9 @@ with tab_model:
         "(zástavba, byty bez stání, landuse, tranzit, rezerva sítě). (2) LightGBM klasifikátor "
         "doporučuje typ stanice. Skóre <b>suitability</b> kombinuje predikci s rezervou sítě, "
         "mezerou v pokrytí a férovostí.<br><br>"
-        "<b>Že to není tabulka:</b> populační baseline („víc lidí → víc nabíjení“) má MAE 5,66; "
-        "model 4,70. Model najde i méně očekávané zóny (málo lidí, ale tranzit + volná síť + "
+        f"<b>Že to není tabulka:</b> populační baseline („víc lidí → víc nabíjení“) má MAE "
+        f"{METRICS.get('mae_baseline_pop', '—')}; model {METRICS.get('mae_model', '—')}. "
+        "Model najde i méně očekávané zóny (málo lidí, ale tranzit + volná síť + "
         "žádné stanice), které prosté pravidlo mine."
         "</div>",
         unsafe_allow_html=True,
