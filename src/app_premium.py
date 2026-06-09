@@ -221,24 +221,41 @@ tab_map, tab_budget, tab_model = st.tabs(
 # ============================================================================
 
 with tab_map:
-    st.caption("Mapa vhodnosti všech zón + žebříček TOP doporučených lokalit. "
-               "Tmavě zelená = vysoká vhodnost. Špendlíky = konkrétní doporučené lokality.")
+    st.caption("Zadej vlevo „Kolik nových stanic plánuješ“ → očíslované špendlíky ukážou "
+               "KAM je umístit. Heatmapy (vhodnost / spotřeba 2030 / potřeba stanic) přepínáš "
+               "ikonou vrstev vpravo nahoře na mapě.")
     col_map, col_table = st.columns([1.55, 1])
 
     with col_map:
-        st.markdown("### Suitability heatmapa Prahy")
+        st.markdown("### Heatmapy Prahy podle modelu")
+        st.caption("Přepínej vrstvy ikonou vrstev vpravo nahoře na mapě. "
+                   "Výchozí = vhodnost. Další: projektovaná spotřeba 2030 a potřeba nových stanic 2030.")
         m = folium.Map(
             location=[df["center_lat"].mean(), df["center_lon"].mean()],
             zoom_start=11, tiles="CartoDB positron", control_scale=True,
         )
 
-        # --- HLAVNÍ VRSTVA: heatmapa vážená suitability skóre ---
-        heat = [[r["center_lat"], r["center_lon"], float(r["suitability_score"]) / 100.0]
-                for _, r in df.iterrows()]
-        HeatMap(
-            heat, name="Suitability heatmapa", radius=16, blur=10, min_opacity=0.3, max_zoom=13,
-            gradient={0.0: "#E9F2EE", 0.4: "#9CCBB7", 0.7: "#3E9E80", 1.0: "#16513F"},
-        ).add_to(m)
+        lat = df["center_lat"].to_numpy()
+        lon = df["center_lon"].to_numpy()
+        dmax = max(df["predicted_demand_2030"].max(), 1e-9)
+
+        def heat_layer(name, weights, gradient, show):
+            fg = folium.FeatureGroup(name=name, show=show)
+            HeatMap(
+                [[lat[i], lon[i], float(w)] for i, w in enumerate(weights)],
+                radius=16, blur=10, min_opacity=0.3, max_zoom=13, gradient=gradient,
+            ).add_to(fg)
+            fg.add_to(m)
+
+        # 1) Vhodnost (výchozí) — zelená
+        heat_layer("① Vhodnost (suitability)", df["suitability_score"] / 100.0,
+                   {0.0: "#E9F2EE", 0.4: "#9CCBB7", 0.7: "#3E9E80", 1.0: "#16513F"}, show=True)
+        # 2) Projektovaná spotřeba 2030 (poptávka po nabíjení) — oranžová/červená (energie)
+        heat_layer("② Projektovaná spotřeba 2030", df["predicted_demand_2030"] / dmax,
+                   {0.0: "#FDEBD0", 0.4: "#F5B041", 0.7: "#E67E22", 1.0: "#A04000"}, show=False)
+        # 3) Potřeba nových stanic 2030 (mezera v pokrytí) — fialová/modrá
+        heat_layer("③ Potřeba nových stanic 2030", df["coverage_gap"].clip(lower=0),
+                   {0.0: "#EAE6F5", 0.4: "#A99CDB", 0.7: "#6C5CE7", 1.0: "#3A2E8C"}, show=False)
 
         # --- detailní zóny (popup "proč") jako přepínatelná vrstva ---
         zones_fg = folium.FeatureGroup(name="Zóny — detail (popup)", show=False)
@@ -264,7 +281,7 @@ with tab_map:
         zones_fg.add_to(m)
 
         # --- TOP-N očíslované kotvy (vždy navrchu) ---
-        top_fg = folium.FeatureGroup(name=f"TOP {top_n} doporučení", show=True)
+        top_fg = folium.FeatureGroup(name=f"★ KAM stavět — {top_n} stanic", show=True)
         for i, r in top.iterrows():
             folium.Marker(
                 location=[r["center_lat"], r["center_lon"]],
