@@ -1,13 +1,18 @@
-"""v2g.py — Linie A: řízené nabíjení + V2G (obousměrné nabíjení) heuristika.
+"""v2g.py — Linie A: Dynamic pricing + V2G (obousměrné nabíjení) heuristika.
 
 JÁDRO VOLTPLÁNU: "KDY a JAK nabíjet, aby auta pomáhala síti, ne ji zatěžovala."
+KLÍČ: Řízení je EKONOMICKÉ (ceny mají být jiné dle kapacity), ne direktivní.
 
 Logika:
   1. Čteme hodinová data: zatížení, rezerva, overload_flag, nabíjení po hodinách.
-  2. Identifikujeme kritické zóny (vysoký overload risk či nízká rezerva v špičce).
-  3. Greedy heuristika: posunout nabíjení ze špičky do milder hodin (když je více rezervy).
-  4. V2G: auta vrací energii v špičce (1% nabíjené flotily = flexibility zdroj).
-  5. Metriky: „X% přetížení zabráněno / Y kWh vráceno do sítě".
+  2. Mapujeme reserve → ceny elektřiny:
+     ├─ Vysoká reserve (mild): levná (3 Kč/kWh) → řidič nabíjí
+     └─ Nízká reserve (špička): drahá (15 Kč/kWh) → řidič čeká
+  3. Greedy heuristika: posunout nabíjení ze špičky do milder hodin (kdy je levnější).
+  4. V2G: v špičce auto vrátí energii + dostane kompenzaci (400 Kč za 240 kWh).
+  5. Metriky: „X% přetížení zabráněno / Y kWh vráceno / Z Kč úspora pro řidiče".
+
+⚠️  DŮLEŽITÉ: Řidič není nucen. Ekonomicky se rozhoduje (levnější = nabíjet).
 
 Input: hourly_grid_and_charging_history_2025.csv (2.29M řádků, lazy).
 Output: submissions/v2g_metrics.csv — 1 řádek = agregace přes všechny zóny/časy.

@@ -24,11 +24,15 @@
   → o **[DOPLNIT] %** lépe; **Precision@50 = [DOPLNIT z consolu]**. Ne tabulka — model najde i méně očekávané zóny.
 - Vysvětlíme **kdy model platí a kdy ne** (nejistota → pásmo scénářů).
 
-## Slide 4 — Výsledky a živá ukázka (V2G „aha")
+## Slide 4 — Výsledky a živá ukázka (Dynamic pricing + V2G)
 **Spusť:** `streamlit run src/app.py` + screenshot. Pak `python src/v2g.py` → čísla.
 - **[ŽIVÉ DEMO / záloha screenshot]** — mapa Prahy obarvená predikovanou poptávkou.
-- **Diferenciátor:** časový graf zátěž vs. rezerva **s/bez řízeného nabíjení + V2G** →
-  metrika **„[DOPLNIT z v2g_metrics.csv] % zabráněných přetížení / [DOPLNIT] kWh vráceno síti"**. Auto = zdroj, ne jen spotřebič.
+- **Jak se to řídí (KLÍČ — ne direktivně!):**
+  - Nízká reserve v síti (špička) → elektřina 15 Kč/kWh (drahá)
+  - Vysoká reserve (mild) → elektřina 3 Kč/kWh (levná)
+  - Řidič se SÁM rozhodne: "Za 3 Kč? Nabiju v noci!" (ekonomicky, ne povinně)
+- **V2G kompenzace:** V špičce auto vrátí 240 kWh → dostane 400 Kč (profit, ne povinnost)
+- **Výsledek:** Přetížení **[DOPLNIT] %** zabráněno / **[DOPLNIT] kWh** vráceno. Auto = zdroj, řidič = investor.
 
 ## Slide 5 — Byznys model (kontinuální služba)
 - Zákazník instituce; **opakovaný příjem**: předplatné MČ/města + **sdílení výnosu z flexibility (V2G)** s energ. komunitou/distributorem.

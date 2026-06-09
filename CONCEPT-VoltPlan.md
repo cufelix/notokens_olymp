@@ -64,6 +64,12 @@ Většina týmů udělá jednu linii (jen predikci, nebo jen recommender). VoltP
                 │  + quantile heads P10/P50/P90  + riziko       │
                 │  přetížení · 3 scénáře z future_scenarios     │
                 │  → poptávka per zóna, per scénář, s pásmem    │
+                │                                               │
+                │  ⚡ DYNAMIC PRICING (motivace řidiče):         │
+                │  Nízká reserve = drahá elektřina (15 Kč/kWh) │
+                │  Vysoká reserve = levná elektřina (3 Kč/kWh) │
+                │  → Řidič se SÁM rozhodne: levnější = nabíjet  │
+                │  (ne direktivní "nabíjej teď", ale ekonomicky)│
                 └───────────────────────┬─────────────────────┘
                                         │ d[z] = poptávka zóny
                 ┌───────────────────────▼─────────────────────┐
@@ -81,6 +87,12 @@ Většina týmů udělá jednu linii (jen predikci, nebo jen recommender). VoltP
                 │  + equity floor (min. pokrytí v každé MČ)     │
                 │  cíl: max vážené pokryté poptávky             │
                 │  → finální plán + metrika „zabráněná přetížení" │
+                │                                               │
+                │  ⚡ V2G KOMPENZACE (motivace řidiče vrátit):  │
+                │  Špička v síti → auto vrátí energii          │
+                │  Řidič dostane 400 Kč za 240 kWh vráceno     │
+                │  → Není povinnost, je to PROFIT pro řidiče    │
+                │  (všichni se chávají optimálně, protože chtějí)│
                 └───────────────────────┬─────────────────────┘
                                         │ plán výstavby per scénář
                 ┌───────────────────────▼─────────────────────┐

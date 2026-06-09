@@ -11,12 +11,18 @@ Praha má 59 000 EV (2026) a cíl 10 000 veřejných dobíjecích stanic do 2030
 
 ---
 
-## Řešení: VoltPlán (Linie A: V2G + řízené nabíjení)
+## Řešení: VoltPlán (Linie A: V2G + ekonomicky řízené nabíjení)
 
 **Architektura:** 3 vrstvy toku dat
 1. **Trust Layer** — čištění dat, leakage guard (`_real`/`_synthetic`)
-2. **Demand Engine** — LightGBM predikce poptávky 2030 (regrese)
-3. **V2G + Grid** — heuristika řízení nabíjení + obousměrné nabíjení (auto vrací energii)
+2. **Demand Engine** — LightGBM predikce poptávky 2030 (regrese) + **Dynamic pricing**
+3. **V2G + Grid** — V2G kompenzace (auto vrací energii, dostane peníze) + ekonomická motivace
+
+**Klíč:** Řízení nabíjení je **EKONOMICKÉ, ne direktivní**
+- Nízká reserve (špička) = drahá elektřina (15 Kč/kWh) → řidič nabíjí v noci
+- Vysoká reserve (mild) = levná elektřina (3 Kč/kWh) → řidič nabíjí hned
+- V2G: Auto vrací energii v špičce → dostane kompenzaci (400 Kč za 240 kWh)
+- Výsledek: Řidič se CHOVÁ optimálně, protože mu to připadá logické (levnější + peníze)
 
 **Model:** LightGBM na 2 378 zónách (features: populace, byty bez stání, kapacita sítě, tranzit).
 

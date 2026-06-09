@@ -23,9 +23,10 @@ Commit: `ccb7918`
 | `HACKATHON-PLAN.md` | ✅ | 4hodinový plán (3 tratě paralelně) |
 | `BRIEF.md` | ✅ | Zhuštěný úkol + co porota chce |
 | `CONCEPT-VoltPlan.md` | ✅ | Architektura + byznys model |
-| `TECHNICAL-SUMMARY.md` | ✅ **NOVÉ** | 1 A4 pro odevzdání |
-| `RUN.md` | ✅ **NOVÉ** | Konkrétní příkazy (0:00–3:45) |
-| `pitch/DECK.md` | ✅ | 8 slidů (doplňují se čísla) |
+| `DYNAMIC-PRICING.md` | ✅ **NOVÉ** | Klíč: ekonomické řízení (řidič se ROZHODUJE) |
+| `TECHNICAL-SUMMARY.md` | ✅ | 1 A4 pro odevzdání |
+| `RUN.md` | ✅ | Konkrétní příkazy (0:00–3:45) |
+| `pitch/DECK.md` | ✅ | 8 slidů (slide 4 aktualizován — dynamic pricing) |
 
 ---
 

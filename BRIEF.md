@@ -19,9 +19,12 @@ Data jsou **sandbox (odrazový můstek), ne zadání samo.** Jedna čistá běž
 Zadání říká: *„Auto u nabíječky není jen spotřebič — podle doby stání může vrátit energii
 do sítě nebo čtvrti (V2G). To je **nejhlubší příležitost** tohoto zadání."* a *„nejsilnější
 řešení obvykle propojí mobilitu a energetiku."*
-→ VoltPlán = predikce poptávky + **řízené nabíjení (KDY/JAK) + V2G (auto jako zdroj pro síť/čtvrť)**
-+ chytré umístění. Propojuje mobilitu (kde/kdy stojí auta) s energetikou (rezerva sítě, flexibilita).
+→ VoltPlán = predikce poptávky + **dynamic pricing (řidič se ROZHODUJE ekonomicky) + V2G (auto vrací energii + dostane peníze)**
++ chytré umístění. **KLÍČ: Řízení je ekonomické (ceny se mění dle kapacity), ne direktivní.**
+Propojuje mobilitu (kde/kdy stojí auta) s energetikou (rezerva sítě, flexibilita, ceny).
 Zákazník = **energetická komunita / distributor** (sdílení výnosu z flexibility) vedle města.
+
+Viz detailně: `DYNAMIC-PRICING.md`
 
 ## Čtyři linie (NEjsou menu — inspirace; lze kombinovat / jít vlastní cestou)
 - **A — Nabíjení a síť (auto jako spotřebič i ZDROJ):** predikce poptávky + kapacity v čase →
