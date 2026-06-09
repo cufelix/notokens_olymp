@@ -3,13 +3,15 @@
 **Hackathon projekt.** Soutěžíme se zadáním **AIO_PHA-02-PHA**: AI služba pro chytré
 rozmístění a kapacitní plánování EV dobíjení v Praze. Cíl = vyhrát krajské kolo.
 
-> ⏱ **MÁME JEN 4 HODINY** (3 lidi, paralelní tratě). Řídící plán = **`HACKATHON-PLAN.md`**
-> (NE 4týdenní roadmapa ve VoltPlánu). Postav 1 běžící model + číslo vs baseline + skvělý
-> pitch. Linie C/optimizer/n8n se jen popisují. **Submit v 3:45, ne 4:00.**
+> ⏱ **~2 HODINY** (3 lidi). 🎯 **VYBRANÝ PRODUKT = `APP-SPEC.md`** — B2G aplikace, která
+> městu vyhodnotí **KDE mají dobíječky smysl** (AI suitability scoring zón), roční licence.
+> **Toto je THE plán. Stav podle `APP-SPEC.md` → „Build order".** Starší V2G/dynamic-pricing/
+> CONCEPT-VoltPlan byly explorace — dnes řešíme JEDEN problém (umístění), ne všechno.
 
 ## Než cokoli uděláš — přečti v tomto pořadí
-1. **`BRIEF.md`** — zhuštěný úkol + **co porota reálně hodnotí** (failure modes z meta-promptů).
-2. **`CONCEPT-VoltPlan.md`** — ⭐ NÁŠ VÍTĚZNÝ KONCEPT a architektura (3 linie jako 1 pipeline:
+1. **`APP-SPEC.md`** — ⭐ ŘÍDÍCÍ: produkt, featury, AI kontrakt, rozdělení, build order.
+2. **`BRIEF.md`** — co porota reálně hodnotí. `zadani/` — plné zadání.
+3. *(kontext, neřídí už):* `CONCEPT-VoltPlan.md` — starší širší koncept (3 linie jako 1 pipeline:
    Trust Layer → Demand → Matching → Grid Optimizer → demo → datová smyčka). Toto stavíme.
 3. **`HARDWARE.md`** — na čem to běží (Intel Lunar Lake, NPU, 32GB) + jak trénovat + stack.
 4. **`DATA-MAP.md`** — inventář dat + ingest playbook. Data zatím nedorazila → slot připravený.
